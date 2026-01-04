@@ -1,1 +1,714 @@
-test
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <title>Team Schedule: PH → PST/EST/UTC/CET</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ———————————————— THEME VARIABLES ———————————————— */
+    :root {
+      /* Dark defaults */
+      --bg: #0f172a; --panel: #111827; --text: #e5e7eb; --muted: #9ca3af;
+      --accent: #60a5fa; --border: #1f2937; --table-row: #0b1220;
+      --btn-active: #1e3a8a;
+
+      --restday-text: #9ca3af;
+      --restday-bg: #0e1626;
+      --restday-bg-hover: #101a2b;
+
+      /* Sizing */
+      --radius: .5rem;
+      --pad-sm: .5rem; --pad-md: .75rem;
+      --btn-min-h: 44px;
+    }
+    :root[data-theme="light"] {
+      --bg: #f7fafc; --panel: #ffffff; --text: #0f172a; --muted: #4b5563;
+      --accent: #2563eb; --border: #e5e7eb; --table-row: #f8fafc;
+      --btn-active: #2563eb;
+
+      --restday-text: #6b7280;
+      --restday-bg: #f2f4f7;
+      --restday-bg-hover: #eef2f7;
+    }
+
+    /* ———————————————— BASE ———————————————— */
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial, "Noto Sans";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      font-size: clamp(14px, 1.6vw, 16px);
+    }
+    header {
+      padding: var(--pad-md) calc(var(--pad-md) + .5rem);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg), var(--table-row));
+    }
+    h1 { margin: 0 0 .25rem 0; font-size: clamp(18px, 2.2vw, 24px); }
+    .sub { color: var(--muted); font-size: .9rem; }
+    .container { padding: var(--pad-md) calc(var(--pad-md) + .5rem) 2rem; }
+
+    /* ———————————————— FILTERS ———————————————— */
+    .filters {
+      display: grid; gap: .75rem;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      margin: .75rem 0 1rem;
+    }
+    .filter {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--pad-sm) var(--pad-md);
+    }
+    .filter label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:.25rem; }
+    .filter select {
+      width: 100%;
+      background: var(--table-row);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: .35rem;
+      padding: .5rem .6rem;
+      min-height: 40px;
+    }
+
+    /* ———————————————— TOOLBAR ———————————————— */
+    .toolbar {
+      display:flex; gap:.5rem; align-items:center; margin:.25rem 0 1rem; flex-wrap: wrap;
+      position: relative; z-index: 10; /* THEME TOGGLE FIX: keep toolbar above overlays */
+    }
+    .btn {
+      background: var(--table-row); color: var(--text); border:1px solid var(--border);
+      padding:.5rem .75rem; border-radius:.4rem; cursor:pointer;
+      min-height: var(--btn-min-h);
+      pointer-events: auto; /* THEME TOGGLE FIX: ensure clicks pass */
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn.secondary { background: var(--panel); }
+    .btn.tz.active, .btn.tz[aria-pressed="true"] { background: var(--btn-active); color: #fff; border-color: var(--accent); }
+    .tz-group { display:flex; gap:.4rem; align-items:center; flex-wrap: wrap; }
+    .tz-label { color: var(--muted); margin-right:.25rem; }
+
+    /* Theme toggle */
+    .theme-group { display:flex; gap:.4rem; align-items:center; }
+    .theme-label { color: var(--muted); margin-left: .5rem; }
+    .theme-icon { font-size: 1rem; }
+
+    /* ———————————————— TABLE WRAP ———————————————— */
+    .table-wrap {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+    .table-wrap::before, .table-wrap::after {
+      content: "";
+      position: sticky; top: 0; bottom: 0;
+      width: 24px; pointer-events: none; z-index: 3;
+    }
+    .table-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), rgba(0,0,0,0)); }
+    .table-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg), rgba(0,0,0,0)); }
+
+    .scroll-hint { font-size: .85rem; color: var(--muted); margin: .35rem 0 .75rem; }
+    .scroll-ctrls { display: none; gap: .5rem; margin-bottom: .5rem; }
+
+    /* ———————————————— TABLE ———————————————— */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 720px;
+    }
+    thead th {
+      position: sticky; top: 0;
+      background: var(--panel); color: var(--text);
+      text-align: left; font-weight: 600;
+      padding: .6rem .75rem;
+      border-bottom: 1px solid var(--border);
+      user-select: none; cursor: pointer;
+      z-index: 2; white-space: nowrap;
+    }
+    tbody td {
+      padding: .6rem .75rem;
+      border-top: 1px solid var(--border);
+      background: var(--table-row);
+      white-space: nowrap;
+      color: var(--text);
+    }
+    tbody tr:hover td { background: color-mix(in oklab, var(--table-row), var(--panel) 35%); }
+    .th-sort-asc::after  { content:" ▲"; color: var(--accent); }
+    .th-sort-desc::after { content:" ▼"; color: var(--accent); }
+
+    /* Sticky first column */
+    thead th.sticky-col,
+    tbody td.sticky-col {
+      position: sticky; left: 0; z-index: 3;
+      background: color-mix(in oklab, var(--panel), #000 8%);
+      box-shadow: 1px 0 0 var(--border);
+    }
+
+    /* RESTDAY cells */
+    td.restday {
+      color: var(--restday-text);
+      background: var(--restday-bg);
+      font-style: italic;
+    }
+    tbody tr:hover td.restday { background: var(--restday-bg-hover); }
+
+    /* ———————————————— RESPONSIVE ———————————————— */
+    @media (max-width: 900px) {
+      .filters { grid-template-columns: 1fr; }
+      .scroll-ctrls { display: flex; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .table-wrap::before, .table-wrap::after { background: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1># Team Schedule: PH → PST/EST/UTC/CET</h1>
+    <div class="sub">
+      Filter by <strong>Teammate</strong>, <strong>Role</strong>, <strong>Shift</strong>. Click table headers to sort.
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Filters -->
+    <section class="filters" aria-label="Filters">
+      <div class="filter">
+        <label for="filter-teammate">Teammate</label>
+        <select id="filter-teammate">
+          <option value="">All teammates</option>
+        </select>
+      </div>
+      <div class="filter">
+        <label for="filter-role">Role</label>
+        <select id="filter-role">
+          <option value="">All roles</option>
+        </select>
+      </div>
+      <div class="filter">
+        <label for="filter-shift">Shift</label>
+        <select id="filter-shift">
+          <option value="">All shifts</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Toolbar -->
+    <div class="toolbar" role="group" aria-label="Actions">
+      <!-- TZ buttons -->
+      <div class="tz-group" role="group" aria-label="Time zone view">
+        <span class="tz-label">View as:</span>
+        <button class="btn tz active" type="button" data-tz="PH"  aria-pressed="true">PH</button>
+        <button class="btn tz"         type="button" data-tz="PST" aria-pressed="false">PST</button>
+        <button class="btn tz"         type="button" data-tz="EST" aria-pressed="false">EST</button>
+        <button class="btn tz"         type="button" data-tz="UTC" aria-pressed="false">UTC</button>
+        <button class="btn tz"         type="button" data-tz="CET" aria-pressed="false">CET</button>
+      </div>
+
+      <!-- Theme toggle -->
+      <div class="theme-group" aria-label="Theme">
+        <button id="theme-toggle" class="btn" type="button" title="Toggle theme">
+          <span class="theme-icon">🌓</span> Toggle theme
+        </button>
+        <span class="theme-label" id="theme-label" aria-live="polite">Dark mode</span>
+      </div>
+
+      <button id="export-btn" class="btn" type="button">Export to Excel (.xls)</button>
+      <button id="reset-btn"  class="btn secondary" type="button">Reset filters</button>
+      <span class="sub" aria-live="polite">Exports the current filtered &amp; sorted view, with frozen header/first column.</span>
+    </div>
+
+    <!-- Scroll hint -->
+    <div id="scroll-hint" class="scroll-hint">Tip: swipe left/right (or use ◀ ▶) to see more days.</div>
+
+    <!-- Optional scroll controls -->
+    <div class="scroll-ctrls" aria-label="Table scroll controls">
+      <button class="btn secondary" type="button" id="scroll-left">◀</button>
+      <button class="btn secondary" type="button" id="scroll-right">▶</button>
+    </div>
+
+    <!-- Table wrapper -->
+    <div class="table-wrap" id="table-wrap">
+      <table id="schedule-table" role="table" aria-label="Team schedule">
+        <thead>
+          <tr id="thead-row">
+            <th class="sticky-col" data-key="teammate">Teammate</th>
+            <th data-key="role">Role</th>
+            <th data-key="shift">Shift</th>
+            <th data-key="timezone">Time zone</th>
+            <!-- Day columns injected by JS -->
+          </tr>
+        </thead>
+        <tbody id="schedule-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    /***************
+     * Data source *
+     ***************/
+    const scheduleData = [
+      { teammate: "Thads Reyes", role: "Network", shift: "Second",
+        days: ["RESTDAY","5AM - 2PM","5AM - 2PM","5AM - 2PM","5AM - 2PM","5AM - 2PM","RESTDAY","RESTDAY","5AM - 2PM"] },
+      { teammate: "Adrian Mesina", role: "Computer", shift: "Second",
+        days: ["RESTDAY","3AM - 12PM","3AM - 12PM","3AM - 12PM","3AM - 12PM","8AM - 5PM","RESTDAY","RESTDAY","3AM - 12PM"] },
+      { teammate: "Alonzo Alterado", role: "Network", shift: "Second",
+        days: ["6AM - 3PM","RESTDAY","RESTDAY","6AM - 3PM","6AM - 3PM","6AM - 3PM","6AM - 3PM","6AM - 3PM","RESTDAY"] },
+      { teammate: "Jessica Edolmo", role: "Computer", shift: "Second",
+        days: ["RESTDAY","RESTDAY","6AM - 3PM","6AM - 3PM","6AM - 3PM","6AM - 3PM","6AM - 3PM","RESTDAY","RESTDAY"] },
+      { teammate: "Dennis Delfin", role: "Computer", shift: "Second",
+        days: ["8AM - 5PM","8AM - 5PM","8AM - 5PM","RESTDAY","RESTDAY","8AM - 5PM","8AM - 5PM","8AM - 5PM","8AM - 5PM"] },
+      { teammate: "Jonas Amil", role: "Computer", shift: "Third",
+        days: ["RESTDAY","10AM - 9PM","10AM - 9PM","10AM - 9PM","10AM - 9PM","RESTDAY","RESTDAY","RESTDAY","10AM - 9PM"] },
+      { teammate: "Shane Garcia", role: "Computer", shift: "Third",
+        days: ["10AM - 7PM","10AM - 7PM","RESTDAY","RESTDAY","10AM - 7PM","10AM - 7PM","10AM - 7PM","10AM - 7PM","10AM - 7PM"] },
+      { teammate: "Jayson Berba", role: "Network", shift: "Third",
+        days: ["11AM - 10PM","RESTDAY","RESTDAY","RESTDAY","11AM - 10PM","11AM - 10PM","11AM - 10PM","11AM - 10PM","RESTDAY"] },
+      { teammate: "Mac Lajato", role: "Network", shift: "Third",
+        days: ["3PM - 12AM","3PM - 12AM","RESTDAY","RESTDAY","3PM - 12AM","3PM - 12AM","3PM - 12AM","3PM - 12AM","3PM - 12AM"] },
+      { teammate: "Jeffrey Flores", role: "Network", shift: "Third",
+        days: ["3PM - 12AM","3PM - 12AM","3PM - 12AM","3PM - 12AM","3PM - 12AM","RESTDAY","RESTDAY","3PM - 12AM","3PM - 12AM"] },
+      { teammate: "Edison Dizon", role: "Network", shift: "First",
+        days: ["9PM - 6AM","9PM - 6AM","RESTDAY","RESTDAY","9PM - 6AM","9PM - 6AM","9PM - 6AM","9PM - 6AM","9PM - 6AM"] },
+      { teammate: "Mae Nicole Matanguihan", role: "Computer", shift: "First",
+        days: ["RESTDAY","RESTDAY","8PM - 5AM","8PM - 5AM","8PM - 5AM","8PM - 5AM","8PM - 5AM","RESTDAY","RESTDAY"] },
+      { teammate: "Eliezer Anthony Villagracia", role: "Comput", shift: "Third",
+        days: ["RESTDAY","RESTDAY","12PM - 9AM","9PM - 6AM","9PM - 6AM","9PM - 6AM","9PM - 6AM","RESTDAY","RESTDAY"] },
+      { teammate: "Nephtali Pangilinan", role: "Computer", shift: "First",
+        days: ["RESTDAY","RESTDAY","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","RESTDAY","RESTDAY"] },
+      { teammate: "Thea Marquez", role: "Network", shift: "First",
+        days: ["RESTDAY","RESTDAY","8PM - 5AM","8PM - 5AM","8PM - 5AM","8PM - 5AM","8PM - 5AM","RESTDAY","RESTDAY"] },
+      { teammate: "Von Lorenz De Vera", role: "Computer", shift: "First",
+        days: ["RESTDAY","RESTDAY","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","RESTDAY","RESTDAY"] },
+      { teammate: "Wil Burgos", role: "Computer", shift: "First",
+        days: ["10PM - 7AM","10PM - 7AM","RESTDAY","RESTDAY","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM"] },
+      { teammate: "Genrick Schwartz", role: "Computer", shift: "First",
+        days: ["9PM - 6AM","9PM - 6AM","RESTDAY","RESTDAY","9PM - 6AM","9PM - 6AM","9PM - 6AM","9PM - 6AM","9PM - 6AM"] },
+      { teammate: "Michael Ponce", role: "DBA", shift: "First",
+        days: ["RESTDAY","RESTDAY","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","RESTDAY","RESTDAY"] },
+      { teammate: "Lean Sta Ana", role: "DBA", shift: "First",
+        days: ["RESTDAY","RESTDAY","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","10PM - 7AM","RESTDAY","RESTDAY"] },
+      { teammate: "Andi Vidar", role: "Cloud", shift: "First",
+        days: ["RESTDAY","RESTDAY","1AM - 10PM","1AM - 10PM","1AM - 10PM","1AM - 10PM","1AM - 10PM","RESTDAY","RESTDAY"] },
+      { teammate: "Aimee Cabrera", role: "suP", shift: "Second",
+        days: ["RESTDAY","RESTDAY","4AM - 1PM","4AM - 1PM","4AM - 1PM","4AM - 1PM","4AM - 1PM","RESTDAY","RESTDAY"] },
+    ];
+
+    /* Role alias */
+    function roleAlias(role) {
+      if (!role) return "";
+      const r = role.trim().toLowerCase();
+      if (r === "comput") return "Computer";
+      return role;
+    }
+
+    /* Global TZ view (PH main) */
+    const TZ_OFFSETS_MIN   = { PH: 480, PST: -480, EST: -300, UTC: 0, CET: 60 }; // minutes from UTC
+    const TZ_OFFSETS_LABEL = { PH: "UTC+08:00", PST: "UTC-08:00", EST: "UTC-05:00", UTC: "UTC+00:00", CET: "UTC+01:00" };
+
+    /* Custom Shift order: First → Second → Third */
+    const SHIFT_ORDER = ["First","Second","Third"];
+    const SHIFT_RANK = SHIFT_ORDER.reduce((acc, v, i) => (acc[v] = i, acc), {});
+
+    const state = {
+      sortKey: 'shift',    // default sort: Shift ascending
+      sortDir: 'asc',
+      filters: { teammate:'', role:'', shift:'' },
+      viewTZ: 'PH',
+      theme: 'dark'
+    };
+
+    const bodyEl  = document.getElementById('schedule-body');
+    const tableEl = document.getElementById('schedule-table');
+    const theadRowEl = document.getElementById('thead-row');
+    const tableWrap = document.getElementById('table-wrap');
+    const scrollHint = document.getElementById('scroll-hint');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeLabel = document.getElementById('theme-label');
+
+    const maxDays = scheduleData.reduce((m, r) => Math.max(m, Array.isArray(r.days) ? r.days.length : 0), 0);
+
+    /* Saturday-first day headers */
+    const WEEKDAY_LABELS_SAT_FIRST = ["Sat","Sun","Mon","Tue","Wed","Thu","Fri"];
+    for (let i = 0; i < maxDays; i++) {
+      const th = document.createElement('th');
+      th.textContent = WEEKDAY_LABELS_SAT_FIRST[i % 7];
+      theadRowEl.appendChild(th);
+    }
+
+    /* Time helpers */
+    function parseClock(str) {
+      const m = str.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+      if (!m) return null;
+      let h = parseInt(m[1], 10);
+      const mm = m[2] ? parseInt(m[2], 10) : 0;
+      const ap = m[3].toUpperCase();
+      if (h === 12) h = 0;
+      let minutes = h * 60 + mm;
+      if (ap === 'PM') minutes += 12 * 60;
+      return minutes;
+    }
+    function fmtClock(minutes) {
+      let m = ((minutes % 1440) + 1440) % 1440;
+      const h24 = Math.floor(m / 60);
+      const mm = m % 60;
+      const ap = h24 >= 12 ? 'PM' : 'AM';
+      let h12 = h24 % 12;
+      if (h12 === 0) h12 = 12;
+      return mm === 0 ? `${h12}${ap}` : `${h12}:${mm.toString().padStart(2,'0')}${ap}`;
+    }
+    function convertRange(val, targetTZ) {
+      if (!val || !val.trim() || /RESTDAY/i.test(val)) return val;
+      const parts = val.split('-');
+      if (parts.length !== 2) return val;
+      const startStr = parts[0].trim();
+      const endStr   = parts[1].trim();
+      const startMin = parseClock(startStr);
+      const endMin   = parseClock(endStr);
+      if (startMin == null || endMin == null) return val;
+
+      const delta = (TZ_OFFSETS_MIN[targetTZ] - TZ_OFFSETS_MIN['PH']);
+      const startConv = startMin + delta;
+      const endConv   = endMin + delta;
+
+      return `${fmtClock(startConv)} - ${fmtClock(endConv)}`;
+    }
+
+    /* UI helpers */
+    function uniqueNormalizedRoles(items) {
+      return [...new Set(items.map(i => roleAlias(i.role)))]
+        .filter(v => v && v.trim() !== "")
+        .sort((a, b) => a.localeCompare(b));
+    }
+    function unique(items, key) {
+      return [...new Set(items.map(i => (i[key] ?? '').trim()))]
+        .filter(v => v !== '');
+    }
+    function populateDropdown(id, values, sorter) {
+      const sel = document.getElementById(id);
+      sel.length = 1; // keep "All ..."
+      const ordered = typeof sorter === 'function' ? values.slice().sort(sorter) : values.slice().sort((a,b) => a.localeCompare(b));
+      ordered.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; sel.appendChild(opt); });
+    }
+
+    /* Filters + sorting */
+    function applyFilters(data) {
+      return data.filter(row => {
+        const roleNorm = roleAlias(row.role);
+        return (!state.filters.teammate || row.teammate === state.filters.teammate) &&
+               (!state.filters.role     || roleNorm      === state.filters.role)     &&
+               (!state.filters.shift    || row.shift     === state.filters.shift);
+      });
+    }
+
+    function applySort(data) {
+      if (!state.sortKey) return data;
+      const dir = state.sortDir === 'asc' ? 1 : -1;
+
+      /* Custom Shift order: First → Second → Third */
+      if (state.sortKey === 'shift') {
+        return [...data].sort((a, b) => {
+          const ar = SHIFT_RANK[a.shift] ?? 999;
+          const br = SHIFT_RANK[b.shift] ?? 999;
+          return (ar - br) * dir;
+        });
+      }
+
+      /* Default string sort for other columns */
+      return [...data].sort((a, b) => {
+        const getVal = (row) => {
+          if (state.sortKey === 'timezone') return `${state.viewTZ} (${TZ_OFFSETS_LABEL[state.viewTZ]})`;
+          if (state.sortKey === 'role')      return roleAlias(row.role);
+          return row[state.sortKey] ?? '';
+        };
+        const A = getVal(a).toString().toLowerCase();
+        const B = getVal(b).toString().toLowerCase();
+        return A.localeCompare(B) * dir;
+      });
+    }
+
+    function render() {
+      const filtered = applyFilters(scheduleData);
+      const finalData = applySort(filtered);
+
+      document.querySelectorAll('.btn.tz').forEach(b => {
+        const pressed = b.dataset.tz === state.viewTZ;
+        b.classList.toggle('active', pressed);
+        b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+      });
+
+      /* Visual header indicator for current sort */
+      tableEl.querySelectorAll('thead th[data-key]').forEach(h => h.classList.remove('th-sort-asc','th-sort-desc'));
+      if (state.sortKey) {
+        const th = tableEl.querySelector(`thead th[data-key="${state.sortKey}"]`);
+        if (th) th.classList.add(state.sortDir === 'asc' ? 'th-sort-asc' : 'th-sort-desc');
+      }
+
+      bodyEl.innerHTML = '';
+      finalData.forEach(row => {
+        const tzText = `${state.viewTZ} (${TZ_OFFSETS_LABEL[state.viewTZ]})`;
+        const tr = document.createElement('tr');
+
+        const teammateCell = document.createElement('td');
+        teammateCell.textContent = row.teammate ?? '';
+        teammateCell.classList.add('sticky-col');
+        tr.appendChild(teammateCell);
+
+        const roleCell = document.createElement('td');
+        roleCell.textContent = roleAlias(row.role);
+        tr.appendChild(roleCell);
+
+        const shiftCell = document.createElement('td');
+        shiftCell.textContent = row.shift ?? '';
+        tr.appendChild(shiftCell);
+
+        const tzCell = document.createElement('td');
+        tzCell.textContent = tzText;
+        tr.appendChild(tzCell);
+
+        for (let i = 0; i < maxDays; i++) {
+          const originalVal  = (row.days && row.days[i]) ? row.days[i] : '';
+          const convertedVal = convertRange(originalVal, state.viewTZ);
+
+          const td = document.createElement('td');
+          td.textContent = convertedVal;
+
+          const isRestDay = typeof originalVal === 'string' && /rest\s*day/i.test(originalVal);
+          if (isRestDay) {
+            td.classList.add('restday');
+            td.setAttribute('aria-label', 'RESTDAY');
+          }
+          tr.appendChild(td);
+        }
+        bodyEl.appendChild(tr);
+      });
+    }
+
+    /* Init filters (with Shift dropdown in custom order) */
+    function shiftSorter(a, b) {
+      const ar = SHIFT_RANK[a] ?? 999;
+      const br = SHIFT_RANK[b] ?? 999;
+      return ar - br;
+    }
+    populateDropdown('filter-teammate', unique(scheduleData, 'teammate').sort((a,b)=>a.localeCompare(b)));
+    populateDropdown('filter-role',     uniqueNormalizedRoles(scheduleData));
+    populateDropdown('filter-shift',    unique(scheduleData, 'shift'), shiftSorter);
+
+    document.getElementById('filter-teammate').addEventListener('change', e => { state.filters.teammate = e.target.value; render(); });
+    document.getElementById('filter-role').addEventListener('change',     e => { state.filters.role     = e.target.value; render(); });
+    document.getElementById('filter-shift').addEventListener('change',    e => { state.filters.shift    = e.target.value; render(); });
+
+    /* Reset */
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      state.filters = { teammate:'', role:'', shift:'' };
+      ['filter-teammate','filter-role','filter-shift'].forEach(id => {
+        const sel = document.getElementById(id); if (sel) sel.value = '';
+      });
+      state.sortKey = 'shift'; state.sortDir = 'asc';
+      state.viewTZ = 'PH';
+      render();
+      tableWrap.scrollTo({ left: 0, behavior: 'smooth' });
+    });
+
+    /* Header sorting */
+    tableEl.querySelectorAll('thead th[data-key]').forEach(th => {
+      if (th.dataset.key === 'teammate') th.classList.add('sticky-col');
+      th.addEventListener('click', () => {
+        const key = th.dataset.key; if (!key) return;
+        if (state.sortKey === key) {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = key;
+          state.sortDir = key === 'shift' ? 'asc' : 'asc';
+        }
+        render();
+      });
+    });
+
+    /* TZ buttons — reliable handler */
+    document.querySelectorAll('.btn.tz').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tz = e.currentTarget.dataset.tz;  // PH / PST / EST / UTC / CET
+        if (!tz || !(tz in TZ_OFFSETS_MIN)) return;
+        state.viewTZ = tz;
+        render();
+      });
+    });
+
+    /* THEME TOGGLE FIX: bind safely after DOM is ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const saved = localStorage.getItem('theme');
+      state.theme = (saved === 'light' || saved === 'dark') ? saved : (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', state.theme);
+      themeLabel.textContent = state.theme === 'dark' ? 'Dark mode' : 'Light mode';
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          state.theme = state.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', state.theme);
+          localStorage.setItem('theme', state.theme);
+          themeLabel.textContent = state.theme === 'dark' ? 'Dark mode' : 'Light mode';
+        });
+      }
+    });
+
+    /* Scroll hint + controls */
+    let hintDismissed = false;
+    function dismissHint() {
+      if (hintDismissed) return;
+      hintDismissed = true;
+      scrollHint.style.display = 'none';
+    }
+    tableWrap.addEventListener('scroll', dismissHint, { passive: true });
+    document.getElementById('scroll-left').addEventListener('click', () => {
+      tableWrap.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+    document.getElementById('scroll-right').addEventListener('click', () => {
+      tableWrap.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+
+    /*********************
+     * Clean Excel (.xls) export (SpreadsheetML)
+     * - Mirrors current table view & order (Shift First→Second→Third)
+     * - Frozen header row & first column
+     *********************/
+    function computeEffectiveDayCount(rows) {
+      let last = maxDays;
+      const isColEmpty = (i) => rows.every(r => !(r.days && r.days[i]) || (r.days[i] ?? '').toString().trim() === '');
+      while (last > 0 && isColEmpty(last - 1)) last--;
+      return last;
+    }
+    function xmlEncode(s) {
+      return (s ?? '').toString()
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function toXlsXml(rows) {
+      const dayCount = computeEffectiveDayCount(rows);
+      const tzText = `${state.viewTZ} (${TZ_OFFSETS_LABEL[state.viewTZ]})`;
+
+      const dayHeaders = Array.from({length: dayCount}, (_,i) => WEEKDAY_LABELS_SAT_FIRST[i % 7]);
+
+      let xml = `<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n`;
+      xml += `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:html="http://www.w3.org/TR/REC-html40">`;
+
+      xml += `<Styles>
+        <Style ss:ID="Default" ss:Name="Normal">
+          <Alignment ss:Vertical="Center"/>
+          <Font ss:FontName="Segoe UI" ss:Size="10" ss:Color="#000000"/>
+        </Style>
+        <Style ss:ID="Header">
+          <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+          <Interior ss:Color="#111827" ss:Pattern="Solid"/>
+          <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+          <Borders>
+            <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#1f2937"/>
+          </Borders>
+        </Style>
+        <Style ss:ID="CellLeft"><Alignment ss:Horizontal="Left" ss:Vertical="Center"/></Style>
+        <Style ss:ID="CellCenter"><Alignment ss:Horizontal="Center" ss:Vertical="Center"/></Style>
+        <Style ss:ID="RestDay">
+          <Font ss:Italic="1" ss:Color="#6b7280"/>
+          <Interior ss:Color="#eef2f7" ss:Pattern="Solid"/>
+          <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+        </Style>
+      </Styles>`;
+
+      xml += `<Worksheet ss:Name="Team Schedule">`;
+
+      const totalCols = 4 + dayCount;
+      const totalRows = 1 + rows.length;
+
+      xml += `<Table ss:ExpandedColumnCount="${totalCols}" ss:ExpandedRowCount="${totalRows}" x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="18">`;
+
+      xml += `<Column ss:Width="180"/>`; // Teammate
+      xml += `<Column ss:Width="110"/>`; // Role
+      xml += `<Column ss:Width="90"/>`;  // Shift
+      xml += `<Column ss:Width="140"/>`; // Time zone
+      for (let i = 0; i < dayCount; i++) xml += `<Column ss:Width="120"/>`;
+
+      xml += `<Row ss:AutoFitHeight="1">`;
+      const headers = ["Teammate","Role","Shift","Time zone", ...dayHeaders];
+      headers.forEach(h => {
+        xml += `<Cell ss:StyleID="Header"><Data ss:Type="String">${xmlEncode(h)}</Data></Cell>`;
+      });
+      xml += `</Row>`;
+
+      rows.forEach(r => {
+        xml += `<Row>`;
+        xml += `<Cell ss:StyleID="CellLeft"><Data ss:Type="String">${xmlEncode(r.teammate)}</Data></Cell>`;
+        xml += `<Cell ss:StyleID="CellLeft"><Data ss:Type="String">${xmlEncode(roleAlias(r.role))}</Data></Cell>`;
+        xml += `<Cell ss:StyleID="CellCenter"><Data ss:Type="String">${xmlEncode(r.shift)}</Data></Cell>`;
+        xml += `<Cell ss:StyleID="CellCenter"><Data ss:Type="String">${xmlEncode(tzText)}</Data></Cell>`;
+
+        for (let i = 0; i < dayCount; i++) {
+          const originalVal  = (r.days && r.days[i]) ? r.days[i] : '';
+          const convertedVal = convertRange(originalVal, state.viewTZ);
+          const val = xmlEncode(convertedVal);
+          const isRest = typeof originalVal === 'string' && /rest\s*day/i.test(originalVal);
+          const style = isRest ? 'RestDay' : 'CellCenter';
+          xml += `<Cell ss:StyleID="${style}"><Data ss:Type="String">${val}</Data></Cell>`;
+        }
+        xml += `</Row>`;
+      });
+
+      xml += `</Table>`;
+
+      xml += `<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+        <Selected/>
+        <FreezePanes/>
+        <FrozenNoSplit/>
+        <SplitHorizontal>1</SplitHorizontal>
+        <TopRowBottomPane>1</TopRowBottomPane>
+        <SplitVertical>1</SplitVertical>
+        <LeftColumnRightPane>1</LeftColumnRightPane>
+        <ActivePane>0</ActivePane>
+        <ProtectObjects>False</ProtectObjects>
+        <ProtectScenarios>False</ProtectScenarios>
+      </WorksheetOptions>`;
+
+      xml += `</Worksheet></Workbook>`;
+      return xml;
+    }
+
+    function downloadXls(filename, xml) {
+      const blob = new Blob([xml], { type: "application/vnd.ms-excel;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const filtered = applyFilters(scheduleData);
+      const finalData = applySort(filtered);
+      const xml = toXlsXml(finalData);
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      downloadXls(`Team-Schedule-${state.viewTZ}-${stamp}.xls`, xml);
+    });
+
+    /* First paint */
+    render();
+  </script>
+</body>
+</html>
