@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gen Artz</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c6cff'/%3E%3Cstop offset='1' stop-color='%23ff5fa2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Segoe UI,Arial' font-weight='800' font-size='26' fill='white' text-anchor='middle'%3EGA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f7fb;--surface:#fff;--surface-2:#f1f2f7;--border:#e4e6ef;--text:#151826;--muted:#5f6579;--faint:#9399ad;
+  --accent:#6d5ef8;--accent-2:#ecebff;--accent-text:#4b3fd6;
+  --ok:#15803d;--ok-bg:#e5f6ea;--warn:#b45309;--warn-bg:#fdf1de;--bad:#dc2626;--bad-bg:#fdecec;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.05);--shadow-lg:0 16px 40px rgba(16,24,40,.16);--r:14px;
+}
+[data-theme=dark]{
+  --bg:#0d0f15;--surface:#151821;--surface-2:#1c202c;--border:#262b3a;--text:#e8eaf2;--muted:#a0a6bc;--faint:#6c7289;
+  --accent:#8b7fff;--accent-2:#262247;--accent-text:#bcb4ff;
+  --ok:#4ade80;--ok-bg:#11291b;--warn:#fbbf24;--warn-bg:#30250d;--bad:#f87171;--bad-bg:#371616;
+  --shadow:none;--shadow-lg:0 18px 48px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Segoe UI Variable Text","Segoe UI",Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent-text)}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app{display:grid;grid-template-columns:236px 1fr;height:100vh}
+.side{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 12px;gap:3px;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;font-weight:750;font-size:17px;letter-spacing:-.01em}
+.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#7c6cff,#ff5fa2);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 4px 12px rgba(124,108,255,.35)}
+.brand small{display:block;font-size:11px;color:var(--faint);font-weight:500}
+.nav{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;color:var(--muted);cursor:pointer;border:0;background:none;width:100%;text-align:left;font-weight:550}
+.nav:hover{background:var(--surface-2);color:var(--text)}
+.nav.on{background:var(--accent-2);color:var(--accent-text)}
+.nav .cnt{margin-left:auto;font-size:11px;background:var(--surface-2);padding:0 7px;border-radius:99px;color:var(--muted);line-height:18px}
+.nav.on .cnt{background:var(--surface)}
+.side .grow{flex:1;min-height:12px}
+.conn{font-size:12px;color:var(--muted);padding:10px;border:1px solid var(--border);border-radius:10px;display:flex;gap:8px;align-items:center;cursor:pointer;background:none;text-align:left;width:100%}
+.conn:hover{background:var(--surface-2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}
+main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{display:flex;align-items:center;gap:10px;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--surface)}
+.top h1{font-size:18px;margin:0;font-weight:680;letter-spacing:-.01em}
+.searchbtn{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:280px;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--faint);cursor:pointer}
+.searchbtn kbd{margin-left:auto}
+kbd{font-family:inherit;font-size:11px;border:1px solid var(--border);border-radius:5px;padding:0 5px;background:var(--surface);color:var(--muted)}
+#view{flex:1;overflow:auto;padding:24px 28px 56px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-weight:580;white-space:nowrap;text-decoration:none;color:var(--text)}
+.btn:hover{background:var(--surface-2)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:none}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:4px 9px;font-size:12.5px;border-radius:7px}
+.btn.sm svg.i{width:15px;height:15px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.ib{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:8px;border:0;background:none;color:var(--muted);cursor:pointer;flex:none}
+.ib:hover{background:var(--surface-2);color:var(--text)}
+.ib.sm{width:26px;height:26px}.ib.sm svg.i{width:15px;height:15px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.pad{padding:18px}
+.card h3{margin:0 0 14px;font-size:14px;font-weight:680;display:flex;align-items:center;gap:8px}
+.card h3 .r{margin-left:auto}
+.card h3 svg.i{color:var(--accent-text)}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.mt{margin-top:16px}.mt8{margin-top:8px}.mt12{margin-top:12px}
+.row{display:flex;align-items:center;gap:8px}.wrap{flex-wrap:wrap}.between{justify-content:space-between}.flex1{flex:1;min-width:0}
+.muted{color:var(--muted)}.faint{color:var(--faint)}.sm{font-size:12.5px}.xs{font-size:11.5px}.b{font-weight:650}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ellip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero{margin-bottom:18px;gap:16px}
+.hero .h2{font-size:22px;font-weight:720;letter-spacing:-.02em}
+.stat{padding:16px 18px}
+.stat .lbl{color:var(--muted);font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.stat .lbl span{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--accent-2);color:var(--accent-text)}
+.stat .val{font-size:28px;font-weight:740;letter-spacing:-.02em;margin-top:8px;line-height:1.1}
+.stat .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.bad{background:var(--bad-bg);color:var(--bad)}.pill.acc{background:var(--accent-2);color:var(--accent-text)}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;display:inline-block}
+.fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fld>label{font-size:12px;font-weight:650;color:var(--muted)}
+.fld .hint{font-size:11.5px;color:var(--faint)}
+input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 10px;outline:none;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-2)}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);box-shadow:none}
+textarea{resize:vertical;min-height:70px;line-height:1.5}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:550;padding-top:22px;cursor:pointer}
+.li{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer}
+.li:hover{background:var(--surface-2)}
+.datebox{width:44px;height:46px;border-radius:10px;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;line-height:1.1}
+.datebox b{font-size:16px}.datebox span{font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:650}
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty svg.i{width:28px;height:28px;color:var(--faint);margin-bottom:6px}
+.bar{height:7px;background:var(--surface-2);border-radius:99px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--c,var(--accent));border-radius:99px;transition:width .3s}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:9px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:5px 11px;border-radius:7px;cursor:pointer;color:var(--muted);font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+[data-theme=dark] .seg button.on{background:var(--border)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input,.toolbar select{width:auto}
+.toolbar .q{min-width:240px;flex:1;max-width:360px}
+/* board */
+.board{display:grid;grid-template-columns:repeat(5,minmax(230px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+.col{background:var(--surface-2);border-radius:14px;padding:10px;min-height:340px;transition:outline .1s}
+.col.over{outline:2px dashed var(--accent);outline-offset:-2px}
+.col h4{margin:2px 4px 10px;font-size:12.5px;display:flex;align-items:center;gap:7px;font-weight:700}
+.col h4 .n{color:var(--faint);font-weight:600}
+.icard{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,transform .15s}
+.icard:hover{border-color:var(--accent)}
+.icard .t{font-weight:650;margin:5px 0 3px}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.tag{font-size:11px;color:var(--accent-text);background:var(--accent-2);padding:1px 7px;border-radius:99px}
+table.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;color:var(--muted);font-weight:650;padding:10px 12px;border-bottom:1px solid var(--border)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--surface-2)}
+/* hooks */
+.sug{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:7px}
+.score{font-size:11.5px;font-weight:750;min-width:36px;text-align:center;padding:2px 6px;border-radius:7px}
+.s-hi{background:var(--ok-bg);color:var(--ok)}.s-mid{background:var(--warn-bg);color:var(--warn)}.s-lo{background:var(--bad-bg);color:var(--bad)}
+.hk{padding:12px 4px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.hk:last-child{border-bottom:0}
+.hk .txt{font-weight:560;font-size:14.5px}
+.stars{display:inline-flex;gap:1px}
+.stars button{border:0;background:none;padding:1px;cursor:pointer;color:var(--border)}
+.stars button.on{color:#f5b301}
+.stars svg.i{width:15px;height:15px}
+.stars button.on svg.i{fill:currentColor}
+.tips{margin:8px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--muted)}
+.tips li{display:flex;gap:6px;align-items:center;margin-top:3px}
+.tips svg.i{width:14px;height:14px}
+/* calendar */
+.calhead{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.calhead h2{margin:0 6px;font-size:18px;font-weight:700;min-width:170px}
+.calwrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}
+.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--surface)}
+.dow{padding:8px 10px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--border)}
+.day{min-height:112px;padding:6px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;min-width:0}
+.day:nth-child(7n){border-right:0}
+.day:hover{background:var(--surface-2)}
+.day.out{background:var(--bg)}.day.out .dn{color:var(--faint)}
+.day.over{background:var(--accent-2)}
+.dn{font-size:12px;font-weight:650;width:24px;height:24px;display:grid;place-items:center;border-radius:50%}
+.day.today .dn{background:var(--accent);color:#fff}
+.chip{display:block;font-size:11.5px;padding:3px 6px;border-radius:6px;margin-top:3px;background:color-mix(in srgb,var(--c) 15%,transparent);border-left:3px solid var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab;font-weight:560}
+.chip.done{opacity:.55;text-decoration:line-through}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-left:auto}
+.legend span{display:inline-flex;gap:5px;align-items:center}
+/* studio */
+.studio{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.tabs{display:flex;gap:3px;padding:4px;background:var(--surface-2);border-radius:11px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:0;background:none;padding:7px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:620;display:inline-flex;gap:7px;align-items:center}
+.tab .n{font-size:11px;color:var(--faint)}
+.tab.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+[data-theme=dark] .tab.on{background:var(--border)}
+.mlist{max-height:calc(100vh - 290px);overflow:auto;margin:10px -6px 0;padding:0 6px}
+.mgrp{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin:12px 4px 4px}
+.mitem{padding:8px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent}
+.mitem:hover{background:var(--surface-2)}
+.mitem.on{background:var(--accent-2);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.mitem .n{font-weight:640;display:flex;gap:6px;align-items:center}
+.mitem .d{font-size:12px;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+pre.code{background:var(--surface-2);border-radius:10px;padding:12px;font:12px/1.55 ui-monospace,"Cascadia Code",Consolas,monospace;overflow:auto;max-height:240px;margin:0;white-space:pre-wrap;word-break:break-word}
+details summary{cursor:pointer;font-weight:620;font-size:13px;color:var(--muted);padding:4px 0}
+.note{font-size:12.5px;padding:10px 12px;border-radius:10px;background:var(--surface-2);color:var(--muted);display:flex;gap:9px;align-items:flex-start}
+.note svg.i{width:16px;height:16px;margin-top:1px;color:var(--accent-text)}
+.guide{border:1px solid var(--border);border-radius:11px;padding:10px 12px;background:var(--surface-2)}
+.guide .b svg.i{width:15px;height:15px;vertical-align:-3px;margin-right:5px;color:var(--accent-text)}
+.guide .chipbtn{font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.note.warn{background:var(--warn-bg);color:var(--warn)}.note.warn svg.i{color:var(--warn)}
+.job{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;padding:14px 4px;border-bottom:1px solid var(--border)}
+.job:last-child{border-bottom:0}
+.jico{width:36px;height:36px;border-radius:10px;background:var(--accent-2);color:var(--accent-text);display:grid;place-items:center}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumbs img,.thumbs video{width:132px;height:88px;object-fit:cover;border-radius:9px;background:var(--surface-2);display:block}
+.thumbs audio{width:260px;height:36px}
+.spin{width:10px;height:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chipbtn{border:1px solid var(--border);background:var(--surface);border-radius:99px;padding:4px 10px;font-size:12.5px;cursor:pointer;font-weight:560}
+.chipbtn:hover{border-color:var(--accent);color:var(--accent-text)}
+/* library */
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.asset{overflow:hidden}
+.asset .media{aspect-ratio:4/3;background:var(--surface-2);display:grid;place-items:center;overflow:hidden}
+.asset .media img,.asset .media video{width:100%;height:100%;object-fit:cover;display:block}
+.asset .media audio{width:90%}
+.nomedia{width:100%;height:100%;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--faint);font-size:11.5px;background:var(--surface-2);border-radius:inherit;text-align:center;padding:6px}
+.thumbs .nomedia{width:132px;height:88px;border-radius:9px}
+.asset .body{padding:11px 12px}
+/* progress */
+.ringwrap{display:flex;align-items:center;gap:18px}
+.ring text{font-family:inherit}
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
+.bars .b i{width:100%;max-width:42px;background:var(--accent);border-radius:7px 7px 3px 3px;min-height:3px;display:block}
+.bars .b i.cur{background:linear-gradient(180deg,#a99dff,var(--accent))}
+.bars .b span{font-size:11px;color:var(--faint);white-space:nowrap}
+.bars .b em{font-size:11.5px;font-style:normal;font-weight:700;color:var(--muted)}
+.heat{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:3px}
+.heat i{border-radius:3px;background:var(--surface-2)}
+.heat i.h1{background:color-mix(in srgb,var(--accent) 35%,var(--surface-2))}.heat i.h2{background:color-mix(in srgb,var(--accent) 65%,var(--surface-2))}.heat i.h3{background:var(--accent)}
+.hrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.hrow .l{width:96px;color:var(--muted);font-weight:560}
+.hrow .v{width:28px;text-align:right;font-weight:700}
+/* settings */
+.set{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;padding:18px 0;border-bottom:1px solid var(--border)}
+.set:last-child{border-bottom:0}
+.set h4{margin:0 0 4px;font-size:14px}
+.set p{margin:0;font-size:12.5px;color:var(--muted)}
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(10,12,20,.45);display:grid;place-items:center;z-index:50;padding:20px;backdrop-filter:blur(3px);animation:fd .15s}
+.mbox{width:min(600px,100%);max-height:90vh;display:flex;flex-direction:column;background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:pop .16s}
+.mh{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border)}
+.mh h2{font-size:16px;margin:0;font-weight:700}
+.mh .ib{margin-left:auto}
+.mb{padding:18px;display:grid;gap:14px;overflow:auto}
+.mf{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--border);justify-content:flex-end;flex-wrap:wrap}
+.pal{position:fixed;inset:0;background:rgba(10,12,20,.45);z-index:60;display:flex;justify-content:center;padding-top:11vh;backdrop-filter:blur(3px)}
+.pbox{width:min(640px,94vw);background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;align-self:flex-start;animation:pop .14s}
+.pin{display:flex;align-items:center;gap:10px;padding:4px 16px;border-bottom:1px solid var(--border);color:var(--faint)}
+.pin input{border:0;padding:14px 0;font-size:15.5px;box-shadow:none!important;background:none}
+.pres{max-height:52vh;overflow:auto;padding:6px}
+.pgrp{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);padding:10px 12px 4px}
+.pit{display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:9px;cursor:pointer}
+.pit .s{margin-left:auto;font-size:12px;color:var(--faint);white-space:nowrap}
+.pit.on{background:var(--accent-2)}
+.pit svg.i{color:var(--muted);width:16px;height:16px}
+#toasts{position:fixed;bottom:20px;right:20px;display:grid;gap:8px;z-index:70}
+.toast{background:var(--text);color:var(--bg);padding:10px 14px;border-radius:11px;box-shadow:var(--shadow-lg);font-weight:580;max-width:380px;animation:pop .18s;font-size:13.5px}
+.toast.bad{background:var(--bad);color:#fff}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}}
+@keyframes fd{from{opacity:0}}
+@media(max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3,.g21,.calwrap{grid-template-columns:1fr}.studio{grid-template-columns:1fr}.mlist{max-height:300px}}
+@media(max-width:760px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;bottom:0;left:0;right:0;flex-direction:row;padding:6px;z-index:20;border-right:0;border-top:1px solid var(--border);overflow-x:auto;gap:2px}
+  .brand,.side .grow,.conn,.nav span,.nav .cnt{display:none}
+  .nav{justify-content:center;padding:10px;width:auto;flex:1}
+  #view{padding:16px 14px 96px}.top{padding:11px 14px}.searchbtn{min-width:0}.searchbtn span,.searchbtn kbd{display:none}
+  .g2,.g4{grid-template-columns:1fr}.set{grid-template-columns:1fr;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main>
+    <header class="top">
+      <h1 id="title">Dashboard</h1>
+      <button class="searchbtn" data-a="pal"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span>Search ideas, hooks, posts, models…</span><kbd>Ctrl K</kbd></button>
+      <button class="ib" data-a="theme" id="themebtn" title="Toggle dark mode"></button>
+      <button class="btn pri" data-a="quick" id="quickbtn"></button>
+    </header>
+    <section id="view"></section>
+  </main>
+</div>
+<div id="modal"></div><div id="palette"></div><div id="toasts"></div>
+
+<script>
+'use strict';
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today=()=>ymd(new Date());
+const parseYmd=s=>{const[a,b,c]=String(s).split('-').map(Number);return new Date(a,(b||1)-1,c||1)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const weekStart=(d=new Date())=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const fmtDate=s=>parseYmd(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+const fmtTime=t=>{if(!t)return'';const[h,m]=t.split(':').map(Number);const d=new Date();d.setHours(h,m);return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})};
+const ago=t=>{const s=(Date.now()-t)/1e3;if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'};
+const byDT=(a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''));
+
+const P={
+  grid:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  sparkles:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
+  trend:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  ext:'<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+  mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/>',
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  film:'<rect x="2" y="2" width="20" height="20" rx="2.5"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/>',
+  tool:'<path d="M14.7 6.3a4 4 0 0 0 5 5L22 14l-8 8-2.3-2.3a4 4 0 0 0-5-5L2 10l8-8z"/>',
+  wave:'<path d="M2 12h2l3-8 4 16 4-12 3 4h4"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.4 1.3 2.8 2.5 2.8z"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+  chevL:'<path d="m15 18-6-6 6-6"/>',chevR:'<path d="m9 18 6-6-6-6"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14 9l2 2"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8M21 3v5h-5"/>',
+  stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  board:'<rect x="3" y="3" width="5" height="18" rx="1.5"/><rect x="10" y="3" width="5" height="12" rx="1.5"/><rect x="17" y="3" width="4" height="8" rx="1.5"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+};
+const ic=(n,cls='')=>`<svg class="i ${cls}" viewBox="0 0 24 24">${P[n]||''}</svg>`;
+
+/* ---------- constants ---------- */
+const PLATFORMS={tiktok:{n:'TikTok',c:'#ff2d55'},reels:{n:'Instagram Reels',c:'#d946ef'},shorts:{n:'YouTube Shorts',c:'#f97316'},youtube:{n:'YouTube',c:'#ef4444'},facebook:{n:'Facebook',c:'#3b82f6'},x:{n:'X',c:'#64748b'}};
+const plat=k=>PLATFORMS[k]||{n:'Other',c:'#94a3b8'};
+const STAT=['Idea','Scripting','Producing','Ready','Posted'];
+const STATC={Idea:'#94a3b8',Scripting:'#f59e0b',Producing:'#7c6cff',Ready:'#0ea5e9',Posted:'#16a34a'};
+const CATS=[{id:'image',n:'Image',i:'image'},{id:'video',n:'Video',i:'film'},{id:'voice',n:'Voice',i:'mic'},{id:'music',n:'Music',i:'music'},{id:'sfx',n:'SFX',i:'wave'},{id:'itool',n:'Image tools',i:'tool'},{id:'vtool',n:'Video tools',i:'tool'}];
+const catOf=id=>CATS.find(c=>c.id===id)||CATS[0];
+
+/* ---------- model catalog (from Higgsfield's model list) ---------- */
+const AR10=['1:1','3:2','2:3','4:3','3:4','4:5','5:4','9:16','16:9','21:9'],AR5=['1:1','4:3','3:4','16:9','9:16'],V3=['16:9','9:16','1:1'],V7=['auto','21:9','16:9','4:3','1:1','3:4','9:16'];
+const SD=['1:1','4:3','3:4','16:9','9:16','3:2','2:3','21:9'],GR=['1:1','auto','1:2','2:1','3:2','2:3','4:3','3:4','16:9','9:16'],ID=['auto','1:1','16:9','9:16','4:3','3:4','3:2','2:3','4:5','5:4','21:9','1:3','3:1'];
+const GENRE=['auto','action','horror','comedy','noir','drama','epic'];
+const ar=o=>({k:'aspect_ratio',l:'Aspect ratio',t:'sel',o,d:o[0]==='auto'?'auto':(o.includes('16:9')?'16:9':o[0])});
+const res=(o,d)=>({k:'resolution',l:'Resolution',t:'sel',o,d:d||o[0]});
+const qual=(o,d)=>({k:'quality',l:'Quality',t:'sel',o,d:d||o[0]});
+const dur=(min,max,d)=>({k:'duration',l:'Duration (sec)',t:'num',min,max,d});
+const durs=(o,d)=>({k:'duration',l:'Duration (sec)',t:'sel',o,d});
+const sel=(k,l,o,d)=>({k,l,t:'sel',o,d:d===undefined?o[0]:d});
+const chk=(k,l,d=false)=>({k,l,t:'chk',d});
+const txt=(k,l,ph='')=>({k,l,t:'txt',ph});
+const num=(k,l,min,max,d)=>({k,l,t:'num',min,max,d});
+const area=(k,l,ph='')=>({k,l,t:'area',ph});
+const audio=(d=true)=>chk('generate_audio','Generate audio',d);
+const vmode=(o,d)=>sel('mode','Mode',o,d);
+const VT=sel('voice_type','Voice type',['preset','element'],'preset'), VID=txt('voice_id','Voice ID','Preset voice or voice element ID');
+const R5=['start_image','end_image','image_references','video_references','audio_references'];
+const M=(id,name,prov,cat,desc,fields=[],refs=[],x={})=>({id,name,prov,cat,desc,fields,refs,...x});
+const S25=[vmode(['t2v','omni_reference','video_edit','video_extension'],'t2v')];
+const MODELS=[
+ // image — Higgsfield
+ M('soul_2','Soul 2.0','Higgsfield','image','Realistic UGC, fashion & characters',[ar(['1:1','16:9','9:16','4:3','3:4','3:2','2:3']),qual(['1.5k','2k'],'2k')],['image']),
+ M('soul_cinematic','Soul Cinema','Higgsfield','image','Cinema-grade stills & concept art',[ar(['1:1','4:3','3:4','16:9','9:16','3:2','2:3','21:9']),qual(['1.5k','2k'],'2k')],['image']),
+ M('cinematic_studio_2_5','Cinema Studio Image 2.5','Higgsfield','image','Cinematic stills up to 4K',[ar(AR10),res(['1k','2k','4k'])],['image']),
+ // image — Google
+ M('nano_banana','Nano Banana','Google','image','Realistic images, budget-friendly',[ar(AR10)],['image_references']),
+ M('nano_banana_pro','Nano Banana Pro','Google','image','Ultimate quality, text & diagrams',[ar(AR10),res(['1k','2k','4k'],'2k')],['image_references']),
+ M('nano_banana_2','Nano Banana 2','Google','image','Fast next-gen, up to 4K, inpaint',[ar(['auto',...AR10]),res(['1k','2k','4k'])],['image_references','mask']),
+ M('nano_banana_2_1','Nano Banana 2.1','Google','image','Image + video references, thinking levels',[ar(['auto',...AR10,'4:1','1:4']),res(['1k','2k','4k']),sel('thinking_level','Thinking',['minimal','medium','high'],'medium')],['image_references','video_references','mask']),
+ M('nano_banana_2_lite','Nano Banana 2 Lite','Google','image','Lite next-gen images, 1K',[ar(['auto',...AR10]),sel('thinking','Thinking',['HIGH','MINIMAL'],'HIGH')],['image_references','mask']),
+ // image — OpenAI
+ M('gpt_image_2','GPT Image 2','OpenAI','image','Text rendering & editing, up to 4K',[ar(['1:1','4:3','3:4','16:9','21:9','9:16','3:2','2:3']),res(['1k','2k','4k']),qual(['low','medium','high'])],['image']),
+ M('gpt_image_2_5','GPT Image 2.5','OpenAI','image','Flare & Sunburst variants',[sel('variant','Variant',['flare','sunburst']),ar(['auto',...AR10]),res(['1k','2k','4k']),qual(['low','medium','high','xhigh','max']),sel('background','Background',['','auto','opaque','transparent'],'')],['image_references']),
+ M('gpt_image_2_6','GPT Image 2.6 (Sunburst)','OpenAI','image','PNG, GIF and SVG output',[ar(['auto',...AR10]),res(['1k','2k','4k']),qual(['auto','low','medium','high','xhigh','max'],'low'),sel('output_format','Format',['png','jpeg','webp','gif','svg']),sel('background','Background',['','auto','opaque','transparent'],'')],['image_references']),
+ M('gpt_image_2_6_flare','GPT Image 2.6 Flare','OpenAI','image','Flare variant, GIF and SVG output',[ar(['auto',...AR10]),res(['1k','2k','4k']),qual(['auto','low','medium','high','xhigh','max'],'low'),sel('output_format','Format',['png','jpeg','webp','gif','svg']),sel('background','Background',['','auto','opaque','transparent'],'')],['image_references']),
+ M('openai_hazel','OpenAI Hazel','OpenAI','image','Best text rendering, logos & infographics',[ar(['1:1','3:2','2:3','auto']),qual(['low','medium','high'],'medium')],['image_references']),
+ // image — Bytedance
+ M('seedream_v4_5','Seedream 4.5','Bytedance','image','4K output, precise control',[ar(['1:1','4:3','16:9','3:2','21:9','3:4','9:16','2:3']),qual(['basic','high'])],['image_references']),
+ M('seedream_v5_lite','Seedream 5.0 Lite','Bytedance','image','Visual reasoning, instruction editing',[ar(['1:1','4:3','3:4','16:9','9:16','21:9']),qual(['basic','high'])],['image_references']),
+ M('seedream_5_0_flash','Seedream 5.0 Flash','Bytedance','image','Fast generation & editing, up to 2K',[ar(['auto',...SD]),res(['1k','1.5k','2k'],'2k')],['image_references']),
+ M('seedream_v5_pro','Seedream 5.0 Pro','Bytedance','image','Pro-tier reasoning & editing',[ar(SD),res(['1k','1.5k','2k'],'2k'),chk('remove_bg','Remove background')],['image_references']),
+ M('seedream_5_5','Seedream 5.5','Bytedance','image','PNG output with transparent backgrounds',[ar(['auto',...SD]),res(['1k','1.5k','2k'],'2k'),sel('background','Background',['auto','transparent','opaque'])],['image_references']),
+ // image — BFL
+ M('flux_2','FLUX.2','Black Forest Labs','image','Pro / Flex / Max, precise prompt adherence',[sel('variant','Variant',['pro','flex','max']),ar(AR5),res(['1k','2k'])],['image_references']),
+ M('flux_3_image','FLUX 3 Image','Black Forest Labs','image','Generation & editing, 10 references',[ar(['auto','21:9','16:9','3:2','4:3','1:1','4:5','3:4','2:3','9:16']),res(['768sq','1k','1.5k','2k','4k'],'1k')],['image_references']),
+ M('flux_kontext','Flux Kontext','Black Forest Labs','image','Context-aware editing & style transfer',[ar(AR5)],['image_references']),
+ // image — Kling / xAI / Ideogram / Recraft / others
+ M('kling_omni_image','Kling O1 Image','Kling','image','Versatile photorealism',[ar(['auto','1:1','16:9','9:16','4:3','3:4','3:2','2:3','21:9']),res(['1k','2k'])],['image_references']),
+ M('kling_image_4_0','Kling Image 4.0','Kling','image','Up to 8K, elements',[ar(['auto','16:9','9:16','1:1','4:3','3:4','3:2','2:3','21:9']),res(['2k','4k','8k'])],['image_references']),
+ M('grok_image','Grok Image','xAI','image','Expressive, high-contrast',[ar(GR),res(['1k','2k']),sel('mode','Mode',['std','quality'])],['image_references']),
+ M('grok_image_2_0','Grok Image 2.0','xAI','image','Next-gen creation & editing',[ar(GR),res(['1k','2k']),qual(['low','medium'],'medium')],['image_references']),
+ M('ideogram_4_5','Ideogram 4.5','Ideogram','image','Typography & transformations',[ar(ID),res(['1k','2k'],'2k'),qual(['very_low','low','medium','high'],'high'),sel('magic_prompt','Magic prompt',['auto','on','off'])],['image_references','mask']),
+ M('ideogram_4_6','Ideogram 4.6','Ideogram','image','2K/4K, masked editing',[ar(ID),res(['2k','4k']),qual(['low','medium','high'],'medium'),sel('background','Background',['auto','opaque','transparent'])],['image_references','mask']),
+ M('ideogram_4_6_precise_edit','Ideogram 4.6 Precise Edit','Ideogram','image','Canvas-preserving precise edits',[qual(['low','medium','high'],'medium')],['image_references','mask']),
+ M('ideogram_vector','Ideogram Vector','Ideogram','image','Generate SVG or vectorize an image',[sel('operation','Operation',['generate','vectorize']),ar(['auto','1:1','16:9','9:16','4:3','3:4','3:2','2:3'])],['image_references']),
+ M('recraft_v4_1','Recraft V4.1','Recraft','image','Logos, icons, vector & product mockups',[sel('model_type','Type',['standard','vector','utility','utility_vector']),ar(['1:1','3:4','4:3','4:5','5:4','3:2','2:3','16:9','9:16']),res(['1k','2k'])]),
+ M('recraft_v4_styles','Recraft V4 Styles','Recraft','image','Generate in your saved Recraft style',[txt('style_id','Style ID','Saved style UUID'),res(['1k','2k']),sel('style_match','Style match',['precise','flexible'])]),
+ M('minimax_h3_image','MiniMax H3 Image','MiniMax','image','Up to 16 references, 4K',[res(['1k','2k','4k'],'4k')],['image_references']),
+ M('z_image','Z Image','Tongyi-MAI','image','Super fast, stylized',[ar(AR5)]),
+ // image tools
+ M('image_background_remover','Background Remover','Higgsfield','itool','Cut the subject out of an image',[],['image_references'],{np:1}),
+ M('outpaint','Outpaint','Higgsfield','itool','Extend an image to a new aspect ratio',[ar(['auto',...AR10])],['image_references'],{np:1}),
+ M('flux_2_pro_outpaint','FLUX.2 Pro Outpaint','Black Forest Labs','itool','Expand each side by pixels',[num('expand_top','Top (px)',-8192,2048,0),num('expand_bottom','Bottom (px)',-8192,2048,0),num('expand_left','Left (px)',-8192,2048,0),num('expand_right','Right (px)',-8192,2048,256)],['image_references'],{po:1}),
+ M('topaz_image','Topaz Upscale','Topaz','itool','Standard upscale & face enhance',[num('output_width','Width (px)',1,16384,4096),num('output_height','Height (px)',1,16384,4096),sel('variant','Model',['Standard V2','Low Resolution V2','CGI','High Fidelity V2','Text Refine']),chk('face_enhancement','Face enhancement')],['image_references'],{np:1}),
+ M('topaz_image_generative','Topaz Generative Upscale','Topaz','itool','Redefine, Recovery & Wonder models',[num('output_width','Width (px)',1,16384,4096),num('output_height','Height (px)',1,16384,4096),sel('variant','Model',['Redefine','Standard MAX','Recovery','Recovery V2','Wonder 2','Wonder 3.5']),num('creativity','Creativity (1–6)',1,6,1)],['image_references'],{np:1}),
+ M('bytedance_image_upscale','Bytedance Upscale','Bytedance','itool','Upscale to 2K or 4K',[res(['2k','4k'],'4k'),chk('remove_bg','Remove background')],['image_references'],{np:1}),
+ M('image_decompose','Image Decompose','Higgsfield','itool','Split an image into layers',[sel('mode','Mode',['granular','standard'])],['image_references'],{np:1}),
+ // video — Higgsfield
+ M('cinematic_studio_video_4_0','Cinema Studio 4.0','Higgsfield','video','Cinema-grade video with camera, light & color control',[...S25,ar(V7),res(['480p','720p','1080p'],'720p'),dur(4,30,5),audio()],R5),
+ M('intone','Higgsfield Intone','Higgsfield','video','Talking heads lip-synced to your voice recordings',[ar(['16:9','9:16','1:1','4:3','3:4','21:9']),res(['480p','720p','1080p'],'1080p')],['character_images','location_image','audio_references'],{po:1}),
+ // video — Bytedance
+ M('seedance_2_0','Seedance 2.0','Bytedance','video','Reference-driven, consistent identity',[ar(V7),res(['480p','720p','1080p','4k'],'720p'),dur(4,15,5),vmode(['std','fast']),sel('genre','Genre',GENRE),audio()],R5),
+ M('seedance_2_0_mini','Seedance 2.0 Mini','Bytedance','video','Fast budget Seedance with native audio',[ar(V7),res(['480p','720p'],'720p'),dur(4,15,5),sel('genre','Genre',GENRE),audio()],R5),
+ M('seedance_2_5','Seedance 2.5','Bytedance','video','Up to 30s, edit & extend clips',[...S25,ar(V7),res(['480p','720p','1080p','4k'],'720p'),dur(4,30,5),audio(),sel('extension_mode','Extend direction',['','forward','backward'],'')],R5),
+ M('seedance_2_5_flash','Seedance 2.5 Flash','Bytedance','video','Fast 2.5 generation, edit & extend',[...S25,ar(V7),res(['480p','720p'],'720p'),dur(4,30,5),audio(),sel('extension_mode','Extend direction',['','forward','backward'],'')],R5),
+ // video — Kling
+ M('kling2_6','Kling 2.6','Kling','video','Cinematic motion, advanced physics',[ar(V3),durs([5,10],5),chk('sound','Sound',true)],['start_image']),
+ M('kling3_0','Kling 3.0','Kling','video','Multi-shot, audio sync',[ar(V3),dur(3,15,5),sel('mode','Quality',['std','pro','4k']),sel('sound','Sound',['on','off'])],['start_image','end_image']),
+ M('kling3_0_turbo','Kling 3.0 Turbo','Kling','video','Fast text & first-frame video',[ar(V3),res(['720p','1080p']),dur(3,15,5)],['start_image']),
+ M('kling_o3_image_reference','Kling 3.0 Omni','Kling','video','Video from up to 7 reference images',[ar(V3),dur(3,15,5),sel('mode','Quality',['std','pro','4k']),sel('sound','Sound',['on','off'])],['image_references']),
+ M('kling_o3_flf','Kling 3.0 Omni (Frames)','Kling','video','First & last frame control',[ar(V3),dur(3,15,5),sel('mode','Quality',['std','pro','4k']),sel('sound','Sound',['on','off'])],['start_image','end_image']),
+ M('kling_video_edit','Kling 3.0 Omni Edit','Kling','video','Edit a video with text + references',[sel('mode','Quality',['pro','std','4k'])],['video_references','image_references']),
+ M('kling4_0','Kling 4.0','Kling','video','Keyframes, references, HDR, up to 30s',[vmode(['text-to-video','image-to-video','reference-to-video','video-edit']),ar(['auto','21:9','16:9','9:16','1:1']),res(['720p','1080p','4k'],'1080p'),sel('dynamic_range','Dynamic range',['sdr','hdr']),dur(3,30,10)],['start_image','end_image','image_references','video_references']),
+ M('kling_4_0_flash','Kling 4.0 Flash','Kling','video','Fast 720p generation & edits',[vmode(['text-to-video','image-to-video','reference-to-video','video-edit']),ar(['auto','21:9','16:9','9:16','1:1']),dur(3,20,10)],['start_image','image_references','video_references']),
+ M('kling3_0_motion_control','Kling 3.0 Motion Control','Kling','video','Transfer motion from a video to an image',[sel('mode','Quality',['std','pro']),sel('background_source','Background from',['input_image','input_video'])],['image_references','video_references'],{po:1}),
+ // video — Google
+ M('veo3_1','Veo 3.1','Google','video','Ultra-realistic, top-tier cinematic',[ar(['16:9','9:16']),durs([4,6,8],8),qual(['basic','high','ultra']),sel('variant','Variant',['veo-3-1-fast','veo-3-1-preview'])],['start_image']),
+ M('veo3_1_lite','Veo 3.1 Lite','Google','video','Fast, affordable clips',[ar(['16:9','9:16','auto']),durs([4,6,8],8),audio(false)],['start_image','end_image']),
+ M('gemini_omni_flash_1_1','Gemini Omni Flash 1.1','Google','video','Native audio, keyframes & edits',[vmode(['text-to-video','image-to-video','reference-to-video','edit']),ar(['16:9','9:16']),res(['360p','720p','1080p','4k'],'720p'),dur(3,10,8)],['start_image','end_image','image_references','video_references']),
+ M('gemini_omni_flash_1_2','Gemini Omni Flash 1.2','Google','video','Adds clip extension, up to 15s',[vmode(['text-to-video','image-to-video','reference-to-video','edit','extend']),ar(['16:9','9:16']),res(['360p','720p','1080p','4k'],'720p'),dur(3,15,8)],['start_image','end_image','image_references','video_references']),
+ // video — Wan
+ M('wan2_6','Wan 2.6','Wan','video','Stylized, experimental',[ar(V3),sel('quality','Quality',['720p','1080p']),durs([5,10,15],5)],['image_references','video_references','audio_references']),
+ M('wan2_7','Wan 2.7','Wan','video','Synced audio, consistent characters',[ar(['16:9','9:16','1:1','4:3','3:4']),res(['720p','1080p']),dur(2,15,5)],['start_image','end_image','audio_references']),
+ M('wan3_0','Wan 3.0','Wan','video','Native audio, up to 30s',[ar(['auto','16:9','9:16','1:1','4:3','3:4']),res(['480p','720p','1080p'],'720p'),dur(2,30,5),audio(),chk('enable_thinking','Thinking (better adherence)')],R5),
+ M('wan3_0_prime','Wan 3.0 Prime','Wan','video','Prime tier of Wan 3.0',[ar(['auto','16:9','9:16','1:1','4:3','3:4']),res(['480p','720p','1080p'],'720p'),dur(2,30,5),audio(),chk('enable_thinking','Thinking (better adherence)')],R5),
+ // video — MiniMax
+ M('minimax_hailuo','Hailuo','MiniMax','video','Natural physics & facial emotion',[sel('variant','Variant',['minimax-2.3','minimax-2.3-fast','minimax','minimax-fast']),durs([6,10],6),res(['768','1080','512'],'768')],['start_image','end_image']),
+ M('minimax_h3','MiniMax H3','MiniMax','video','2K, multimodal references',[ar(V7),dur(4,15,5)],R5),
+ M('minimax_h3_max','MiniMax H3 Max','MiniMax','video','Fast multimodal video',[ar(V7),res(['768p','480p']),dur(5,15,5)],R5),
+ // video — xAI
+ M('grok_video','Grok Video','xAI','video','Text & image to video with audio',[ar(V3),dur(1,15,5)],['start_image']),
+ M('grok_video_v15','Grok Video 1.5','xAI','video','Image & audio references',[res(['480p','720p','1080p'],'720p'),dur(2,15,5)],['start_image','image_references','audio_references']),
+ M('grok_video_v15_lite','Grok Imagine Video 1.5 Lite','xAI','video','Fast, up to 1080p (upscaled)',[ar(['auto','16:9','9:16','4:3','3:4','1:1','3:2','2:3']),res(['480p','720p','1080p'],'720p'),dur(1,15,5)],['start_image']),
+ // video — BFL / Happy Horse
+ M('flux_3_video','FLUX 3 Video','Black Forest Labs','video','Up to 20s, 4K, synchronized audio',[ar(['auto','21:9','2:1','16:9','4:3','1:1','3:4','9:16']),res(['720p','1080p','2k','4k'],'720p'),dur(5,20,5),audio()],['start_image','end_image','image_references','video_references']),
+ M('flux_3_video_edit','FLUX 3 Video Edit','Black Forest Labs','video','Edit a clip with a text prompt',[],['video_references']),
+ M('happy_horse_video','Happy Horse Video','Happy Horse','video','Text & first-frame animation',[ar(['16:9','9:16','1:1','4:3','3:4']),res(['720p','1080p']),dur(3,15,5)],['start_image']),
+ // video tools
+ M('topaz_video','Topaz Video Upscale','Topaz','vtool','Upscale & enhance to 1080p / 4K',[res(['1080p','2160p'])],['video_references'],{np:1}),
+ M('topaz_hyperion_2_5','Topaz Hyperion 2.5 (HDR)','Topaz','vtool','Convert SDR video to HDR',[sel('output_format','Output format',['prores','h265','exr'])],['video_references'],{np:1}),
+ M('bytedance_video_upscale','Bytedance Video Upscale','Bytedance','vtool','Upscale to 1080p, 2K or 4K',[res(['1080p','2k','4k'],'2k'),num('fps','FPS',24,60,24),sel('preset','Preset',['common','aigc','short_series','ugc','old_film'],'aigc'),sel('model_version','Model',['standard','pro'])],['video_references'],{np:1}),
+ M('video_upscale','Video Upscale','Higgsfield','vtool','Quick upscale to higher resolution',[],['input_video'],{np:1}),
+ M('fps_boost','FPS Boost','Higgsfield','vtool','Raise frame rate (ByteDance or Topaz)',[sel('variant','Engine',['bytedance','topaz']),num('fps','Target FPS',16,120,60)],['video_references'],{np:1}),
+ M('video_deflicker','Deflicker','Higgsfield','vtool','Remove flicker from a clip',[],['input_video'],{np:1}),
+ M('reframe','Reframe','Higgsfield','vtool','Reframe a video to a new aspect ratio',[ar(['9:16','16:9','1:1','4:3','3:4','21:9']),res(['480p','720p','1080p'],'720p')],['video_references','start_image','image_references'],{po:1}),
+ M('video_background_remover','Video Background Remover','Higgsfield','vtool','Remove the background from a video',[],['video_references'],{np:1}),
+ M('sam_3_video','Remove Background (SAM 3)','Higgsfield','vtool','Segment & mask the subject',[chk('apply_mask','Apply mask',true)],['video_references'],{np:1}),
+ M('depth_anything_video','Depth Anything','Depth Anything','vtool','Depth map from a video',[sel('colormap','Color map',['grayscale','turbo','inferno','magma','viridis']),sel('variant','Model size',['VDA-Large','VDA-Base','VDA-Small']),chk('side_by_side','Side by side')],['video_references'],{np:1}),
+ // voice
+ M('elevenlabs_v4','Eleven v4','ElevenLabs','voice','Multi-voice dialogue, up to 10 voices',[VT,VID,num('stability','Stability (0–1)',0,1,''),num('similarity_boost','Similarity (0–1)',0,1,'')],[],{dialogue:1}),
+ M('elevenlabs_v4_turbo','Eleven v4 Turbo','ElevenLabs','voice','One voice, faster',[VT,VID],[],{dialogue:1}),
+ M('text2speech_v2','Text to Speech V2','Higgsfield','voice','Pick the engine: ElevenLabs, MiniMax, Seed Speech, Vibe Voice, Cozy Voice',[sel('variant','Engine',['elevenlabs','minimax','seed_speech','vibe_voice','cozy_voice']),VT,VID]),
+ M('seed_audio','Seed Audio 1.0','ByteDance','voice','TTS with voice or audio reference',[sel('format','Format',['wav','mp3','ogg_opus','pcm']),num('speech_rate','Speech rate (−50…100)',-50,100,0),num('pitch_rate','Pitch (−12…12)',-12,12,0),sel('voice_type','Voice type',['','preset','element'],''),txt('voice_id','Voice ID (optional)')],['audio_references','image_references']),
+ M('qwen_audio_tts','Qwen Audio 3.0 TTS Flash','Alibaba Cloud','voice','Style instructions & cloned voices',[VT,VID,txt('instruction','Style direction','e.g. warm, excited, slow'),sel('language','Language',['','en','zh','ja','ko','fr','de','pt','it','ru','th','id','vi','ms'],''),sel('format','Format',['mp3','wav','ogg_opus','pcm'])]),
+ M('inworld_text_to_speech','Inworld TTS','Inworld','voice','~100 preset voices, many languages',[sel('voice','Voice',['Olivia (en)','Liam (en)','Sarah (en)','James (en)','Luna (en)','Theodore (en)','Ashley (en)','Mark (en)','Hades (en)','Pixie (en)','Diego (es)','Lupita (es)','Asuka (ja)','Satoshi (ja)','Minji (ko)','Hyunwoo (ko)','Alain (fr)','Hélène (fr)','Johanna (de)','Riya (hi)'])],[],{game:1}),
+ M('audio_dubbing','Audio Dubbing','ElevenLabs','voice','Translate an audio file into another language',[txt('target_language','Target language','e.g. fil, ja, es, pt-BR'),txt('source_language','Source language (optional)','e.g. en')],['audio'],{np:1}),
+ M('voice_change','Voice Change','Higgsfield','voice','Swap the voice in a video',[VT,VID],['input_video'],{np:1}),
+ M('dubbing','Video Dubbing','Higgsfield','voice','Translate a video’s speech',[sel('target_language','Target language',['eng','fil','spa','jpn','kor','cmn','fra','deu','ita','por','hin','ara','rus','tur','pol','ind','swe','fin'])],['input_video'],{np:1}),
+ M('sync_so','Sync Lipsync 3','Sync','voice','Sync lips to new audio',[sel('sync_mode','If lengths differ',['bounce','loop','cut_off','silence','remap'])],['input_video','input_audio'],{np:1}),
+ // music & sfx
+ M('elevenlabs_music_v2_5','ElevenLabs Music v2.5','ElevenLabs','music','Songs or instrumentals from a prompt or lyrics',[num('duration','Duration (sec)',3,600,30),chk('force_instrumental','Instrumental only'),num('batch_size','Variations',1,4,1),area('lyrics','Custom lyrics (optional, max 120 s)','[Verse]\n…')]),
+ M('elevenlabs_music_v2','ElevenLabs Music v2','ElevenLabs','music','Songs or instrumentals from a prompt or lyrics',[num('duration','Duration (sec)',3,600,30),chk('force_instrumental','Instrumental only'),num('batch_size','Variations',1,4,1),area('lyrics','Custom lyrics (optional, max 120 s)','[Verse]\n…')]),
+ M('sonilo_music','Sonilo Music','FAL','music','Text-to-music with set duration',[num('duration','Duration (sec)',1,120,8)],[],{game:1}),
+ M('mirelo_text_to_audio','Mirelo Text to Audio','FAL','sfx','Sound effects with set duration',[num('duration','Duration (sec)',1,30,2)],[],{game:1}),
+];
+const NATIVE_AUDIO=['seedance_2_5','seedance_2_0','kling4_0','kling3_0','veo3_1','wan3_0','flux_3_video','gemini_omni_flash_1_2','cinematic_studio_video_4_0'];
+const ARR=r=>/_references$|^character_images$/.test(r);
+const ROLE={image:'Reference image URL',image_references:'Reference image URLs',start_image:'Start frame URL',end_image:'End frame URL',mask:'Mask image URL',video_references:'Video URLs',audio_references:'Audio URLs',input_video:'Input video URL',input_audio:'Input audio URL',audio:'Source audio URL',character_images:'Character image URLs (1–2)',location_image:'Location image URL'};
+const DEFAULT_ENDPOINTS={soul_2:'higgsfield-ai/soul/v2/standard'};
+
+/* ---------- state ---------- */
+const KEY='genartz.v1';
+const defaults=()=>({ideas:[],hooks:[],posts:[],jobs:[],assets:[],log:[],settings:{theme:'system',weeklyGoal:5,name:'',proxyUrl:'',remind:true,endpoints:{...DEFAULT_ENDPOINTS}}});
+let S;
+function load(){
+  let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}
+  if(!raw){S=defaults();seed();return save()}
+  try{const d=JSON.parse(raw);S=Object.assign(defaults(),d);S.settings=Object.assign(defaults().settings,d.settings||{});S.settings.endpoints=Object.assign({...DEFAULT_ENDPOINTS},S.settings.endpoints||{})}catch(e){S=defaults()}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save locally. Export a backup from Settings.','bad')}}
+let _st;const saveSoon=()=>{clearTimeout(_st);_st=setTimeout(save,300)};
+const act=t=>{S.log.push({d:today(),t});if(S.log.length>4000)S.log=S.log.slice(-4000)};
+function seed(){
+  const d=n=>ymd(addDays(new Date(),n)),now=Date.now(),a=uid(),b=uid(),c=uid();
+  S.ideas=[
+    {id:a,title:'Same prompt, 3 image models',notes:'Run one prompt through Nano Banana Pro, GPT Image 2.6 and Seedream 5.5. Split-screen reveal, let viewers vote.',platform:'tiktok',status:'Producing',tags:['comparison','ai-art'],createdAt:now,updatedAt:now,sample:1},
+    {id:b,title:'Turn a phone photo into a cinematic shot',notes:'Before/after. Start frame → Kling 4.0 or Seedance 2.5 with a slow push-in.',platform:'reels',status:'Scripting',tags:['tutorial'],createdAt:now-864e5,updatedAt:now-864e5,sample:1},
+    {id:c,title:'60-second AI music video breakdown',notes:'Song → visuals → edit. Show the full pipeline.',platform:'shorts',status:'Idea',tags:['bts','music'],createdAt:now-2*864e5,updatedAt:now-2*864e5,sample:1}];
+  S.hooks=[
+    {id:uid(),text:'Same prompt. 3 AI models. Only one got it right.',ideaId:a,rating:4,createdAt:now,sample:1},
+    {id:uid(),text:'Stop scrolling if you shoot everything on your phone.',ideaId:b,rating:3,createdAt:now-36e5,sample:1},
+    {id:uid(),text:'I made a full music video in 60 minutes with AI.',ideaId:c,rating:0,createdAt:now-72e5,sample:1}];
+  S.posts=[
+    {id:uid(),title:'Same prompt, 3 image models',ideaId:a,platform:'tiktok',date:d(1),time:'19:00',status:'scheduled',notes:'',sample:1},
+    {id:uid(),title:'Phone photo → cinematic shot',ideaId:b,platform:'reels',date:d(3),time:'12:00',status:'scheduled',notes:'',sample:1},
+    {id:uid(),title:'Behind the scenes teaser',ideaId:'',platform:'shorts',date:d(-2),time:'18:30',status:'posted',notes:'',sample:1}];
+  S.log=[{d:d(-2),t:'post'},{d:d(-1),t:'idea'},{d:today(),t:'hook'}];
+}
+
+/* ---------- UI state ---------- */
+const now0=new Date();
+const UI={route:'dashboard',ideaQ:'',ideaPlat:'all',ideaView:'board',hookQ:'',hookSort:'new',hookTopic:'',hookSugs:[],hookDraft:'',hookIdea:'',
+  cal:{y:now0.getFullYear(),m:now0.getMonth()},cat:'video',model:'seedance_2_5',mq:'',forms:{},pendingPrompt:null,pendingIdea:'',libF:'all',libQ:'',hasKey:false};
+
+/* ---------- connection (Higgsfield API) ---------- */
+const DESK=!!(window.genartz&&window.genartz.isDesktop);
+const TERMINAL=['completed','failed','nsfw','canceled','cancelled','draft'];
+const api={
+  mode(){return DESK?(UI.hasKey?'desktop':'nokey'):(S.settings.proxyUrl?'proxy':'off')},
+  async submit(path,body,idem){if(DESK)return unwrap(await window.genartz.submit({path,body,idem}));return pfetch('POST',path,body,idem)},
+  async status(j){if(DESK)return unwrap(await window.genartz.status(j.requestId));return pfetch('GET','requests/'+encodeURIComponent(j.requestId)+'/status')},
+  async cancel(j){if(DESK)return unwrap(await window.genartz.cancel({id:j.requestId,url:j.cancelUrl}));return pfetch('POST','requests/'+encodeURIComponent(j.requestId)+'/cancel')}
+};
+function unwrap(r){if(!r||!r.ok)throw new Error((r&&r.error)||'Request failed');return r.data}
+async function pfetch(method,path,body,idem){
+  const base=S.settings.proxyUrl.replace(/\/+$/,'');
+  const h={'Content-Type':'application/json'};if(idem)h['Idempotency-Key']=idem;
+  const r=await fetch(base+'/'+path.replace(/^\/+/,''),{method,headers:h,body:body?JSON.stringify(body):undefined});
+  const t=await r.text();let d;try{d=JSON.parse(t)}catch(e){d={raw:t}}
+  if(!r.ok)throw new Error('HTTP '+r.status+': '+(d.detail||d.message||d.error||t.slice(0,160)));
+  return d;
+}
+const connLabel=()=>({desktop:['ok','Higgsfield connected','Desktop app'],nokey:['warn','Add your API key','Desktop app'],proxy:['ok','Connected via proxy','Browser'],off:['','Not connected','Browser · copy & paste mode']})[api.mode()];
+
+/* ---------- toast / modal / clipboard ---------- */
+function toast(msg,kind=''){const t=document.createElement('div');t.className='toast '+kind;t.textContent=msg;const tc=$('#toasts');tc.appendChild(t);while(tc.children.length>3)tc.firstChild.remove();setTimeout(()=>t.remove(),3200)}
+function openModal(title,body,foot='',wide=false){$('#modal').innerHTML=`<div class="ov" data-a="ovClose"><div class="mbox" style="${wide?'width:min(760px,100%)':''}"><div class="mh"><h2>${title}</h2><button class="ib" data-a="closeModal">${ic('x')}</button></div><div class="mb">${body}</div>${foot?`<div class="mf">${foot}</div>`:''}</div></div>`}
+const closeModal=()=>{$('#modal').innerHTML=''};
+async function copy(t,msg='Copied'){try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}toast(msg)}
+function openExt(url){if(DESK&&window.genartz.open)window.genartz.open(url);else window.open(url,'_blank','noopener')}
+function notify(title,body){try{if(DESK&&window.genartz.notify)return window.genartz.notify({title,body});if('Notification'in window&&Notification.permission==='granted')new Notification(title,{body})}catch(e){}}
+function confirmBox(title,msg,okLabel,cb){openModal(title,`<div class="muted">${msg}</div>`,`<button class="btn" data-a="closeModal">Cancel</button><button class="btn pri" style="background:var(--bad);border-color:var(--bad)" data-a="confirmOk">${okLabel}</button>`);UI._confirm=cb}
+
+/* ---------- theme ---------- */
+function applyTheme(){const t=S.settings.theme;const dark=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=dark?'dark':'light';$('#themebtn').innerHTML=ic(dark?'sun':'moon')}
+function toggleTheme(){S.settings.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';save();applyTheme();if(UI.route==='settings')render()}
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',applyTheme);
+
+/* ---------- router & render ---------- */
+const ROUTES={dashboard:['Dashboard','grid',()=>vDash()],ideas:['Ideas','bulb',()=>vIdeas()],hooks:['Hooks','zap',()=>vHooks()],calendar:['Calendar','cal',()=>vCal()],studio:['Studio','sparkles',()=>vStudio()],library:['Library','image',()=>vLib()],progress:['Progress','trend',()=>vProg()],settings:['Settings','gear',()=>vSet()]};
+const HASH={settings:'prefs'},UNHASH={prefs:'settings'};
+const routeFromHash=()=>{const h=location.hash.replace(/^#\/?/,'');const r=UNHASH[h]||h;return ROUTES[r]?r:'dashboard'};
+const go=r=>{if(UI.route===r)render();location.hash='#'+(HASH[r]||r)};
+window.addEventListener('hashchange',()=>{UI.route=routeFromHash();render();$('#view').scrollTop=0});
+// media that can't load (expired link, or blocked in a hosted preview) gets a tidy placeholder
+document.addEventListener('error',e=>{const t=e.target;if(!t||!/^(IMG|VIDEO)$/.test(t.tagName)||t.dataset.broken)return;t.dataset.broken=1;const d=document.createElement('div');d.className='nomedia';d.innerHTML=ic(t.tagName==='IMG'?'image':'film')+'<span>Preview unavailable · open link</span>';t.replaceWith(d)},true);
+function renderSide(){
+  const active=S.jobs.filter(j=>!TERMINAL.includes(j.status)).length;
+  const counts={ideas:S.ideas.filter(i=>i.status!=='Posted').length,calendar:S.posts.filter(p=>p.status!=='posted'&&p.date>=today()).length,studio:active,library:S.assets.length};
+  const [k,l,sub]=connLabel();
+  $('#side').innerHTML=`<div class="brand"><div class="logo">GA</div><div>Gen Artz<small>Create · Plan · Post</small></div></div>`+
+  Object.entries(ROUTES).map(([r,[n,i]])=>`<button class="nav ${UI.route===r?'on':''}" data-a="go" data-r="${r}" title="${n}">${ic(i)}<span>${n}</span>${counts[r]?`<b class="cnt">${counts[r]}</b>`:''}</button>`).join('')+
+  `<div class="grow"></div><button class="conn" data-a="go" data-r="settings"><span class="dot ${k}"></span><div><div style="color:var(--text);font-weight:600">${l}</div><div class="xs faint">${sub}</div></div></button>`;
+}
+const QUICK={dashboard:['Generate','sparkles','go:studio'],ideas:['New idea','plus','newIdea'],hooks:['New hook','plus','focusHook'],calendar:['Schedule post','plus','newPost'],studio:['Generate','sparkles','generate'],library:['Add by URL','plus','addAsset'],progress:['Set goal','target','go:settings'],settings:['Export backup','download','export']};
+function render(){
+  const a=document.activeElement,fid=a&&a.id;let ss,se;try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}
+  renderSide();
+  const [t]=ROUTES[UI.route];$('#title').textContent=t;
+  const q=QUICK[UI.route];$('#quickbtn').innerHTML=ic(q[1])+q[0];$('#quickbtn').dataset.q=q[2];
+  $('#view').innerHTML=ROUTES[UI.route][2]();
+  if(fid&&fid!=='quickbtn'){const el=document.getElementById(fid);if(el&&el!==a){el.focus();try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
+  if(UI.route==='studio')updatePreview();
+}
+
+/* ---------- shared bits ---------- */
+const statusPill=s=>`<span class="pill" style="background:color-mix(in srgb,${STATC[s]} 16%,transparent);color:${STATC[s]}"><span class="pdot" style="--c:${STATC[s]}"></span>${s}</span>`;
+const platTag=k=>`<span class="row xs muted" style="gap:6px"><span class="pdot" style="--c:${plat(k).c}"></span>${plat(k).n}</span>`;
+const platOpts=v=>Object.entries(PLATFORMS).map(([k,p])=>`<option value="${k}" ${v===k?'selected':''}>${p.n}</option>`).join('');
+const ideaOpts=(v,none='No linked idea')=>`<option value="">${none}</option>`+S.ideas.map(i=>`<option value="${i.id}" ${v===i.id?'selected':''}>${esc(i.title)}</option>`).join('');
+const ideaName=id=>{const i=S.ideas.find(x=>x.id===id);return i?i.title:''};
+const empty=(icon,t,sub='',btn='')=>`<div class="empty">${ic(icon)}<div class="b" style="color:var(--text)">${t}</div><div class="sm">${sub}</div>${btn?`<div class="mt12">${btn}</div>`:''}</div>`;
+function ring(pct,big,small,size=128){const r=size/2-10,c=2*Math.PI*r,o=c*(1-Math.min(1,pct/100));return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="11"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#rg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${o}" transform="rotate(-90 ${size/2} ${size/2})"/><defs><linearGradient id="rg"><stop offset="0" stop-color="#7c6cff"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient></defs><text x="50%" y="48%" text-anchor="middle" font-size="${size/6}" font-weight="750" fill="var(--text)">${big}</text><text x="50%" y="64%" text-anchor="middle" font-size="11.5" fill="var(--muted)">${small}</text></svg>`}
+function streaks(){const days=new Set(S.log.map(l=>l.d));let d=new Date();if(!days.has(ymd(d)))d=addDays(d,-1);let cur=0;while(days.has(ymd(d))){cur++;d=addDays(d,-1)}
+  const s=[...days].sort();let best=0,run=0,prev=null;s.forEach(x=>{run=prev&&ymd(addDays(parseYmd(prev),1))===x?run+1:1;best=Math.max(best,run);prev=x});return{cur,best}}
+const postRow=(p,compact)=>{const d=parseYmd(p.date);return `<div class="li" data-a="editPost" data-id="${p.id}"><div class="datebox"><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{month:'short'})}</span></div><div class="flex1"><div class="b ellip">${esc(p.title)}</div><div class="row wrap xs muted" style="gap:2px 10px">${platTag(p.platform)}<span style="white-space:nowrap">${compact?fmtTime(p.time):fmtDate(p.date)+' · '+fmtTime(p.time)}</span></div></div>${compact?(p.status==='posted'?`<span style="color:var(--ok)" title="Posted">${ic('check')}</span>`:''):p.status==='posted'?'<span class="pill ok">Posted</span>':'<span class="pill acc">Scheduled</span>'}</div>`};
+
+/* ---------- hooks scoring ---------- */
+function hookScore(t){t=String(t||'').trim();const w=t?t.split(/\s+/).length:0;let s=45;const tips=[];
+  if(w>=4&&w<=12)s+=18;else if(w>12&&w<=18){s+=6;tips.push('Trim to 12 words or fewer')}else if(w>18){s-=12;tips.push('Too long — cut to under 12 words')}else if(w)tips.push('Add a bit more context');
+  if(/\d/.test(t))s+=8;else tips.push('Add a number (3 tips, 60 seconds…)');
+  if(/\b(you|your|you're)\b/i.test(t))s+=8;else tips.push('Speak to the viewer with “you”');
+  if(/\b(stop|never|secret|nobody|mistake|wrong|why|how|pov|wait|before|only|shouldn't|insane|truth|worst|best)\b/i.test(t))s+=11;else tips.push('Add tension: secret, mistake, stop, POV…');
+  if(/\?$/.test(t))s+=4;if(t.length>110)s-=8;
+  return{s:Math.max(0,Math.min(100,s)),w,tips}}
+const scoreTag=t=>{const{s}=hookScore(t);return `<span class="score ${s>=75?'s-hi':s>=55?'s-mid':'s-lo'}" title="Hook score">${s}</span>`};
+const HOOK_T=['Stop scrolling if you care about {t}.','I made this {t} with AI in under 10 minutes.','Nobody is talking about this {t} trick.','3 mistakes everyone makes with {t}.','POV: you finally figured out {t}.','This {t} shouldn’t be possible with AI.','Watch this before you try {t}.','I spent 30 days testing {t}. Here’s what happened.','You’re doing {t} wrong. Here’s why.','The {t} secret pros won’t tell you.','Wait for the ending… {t} like you’ve never seen it.','What if {t} took 60 seconds?','How I’d start {t} from zero in '+new Date().getFullYear()+'.','Is {t} worth it in '+new Date().getFullYear()+'? Honest answer.','Before vs after: {t} with one prompt.','This is your sign to try {t}.','Rate this {t} from 1 to 10.','I asked AI to make {t}. It went too far.','Steal my exact {t} workflow.','Everyone’s sleeping on {t}. Here’s why you shouldn’t.','Only 1% of creators know this about {t}.','Why does nobody show the real {t} process?'];
+function genHooks(topic){const arr=[...HOOK_T].sort(()=>Math.random()-.5).slice(0,8).map(x=>x.replace('{t}',topic));return arr.sort((a,b)=>hookScore(b).s-hookScore(a).s)}
+function meter(t){if(!t.trim())return `<div class="xs faint">Start typing to see a live score and tips.</div>`;const h=hookScore(t);const c=h.s>=75?'var(--ok)':h.s>=55?'var(--warn)':'var(--bad)';
+  return `<div class="row"><span class="sm b" style="color:${c};min-width:74px">Score ${h.s}</span><div class="bar" style="--c:${c}"><i style="width:${h.s}%"></i></div><span class="xs faint">${h.w} words · ${t.length} chars</span></div>`+(h.tips.length?`<ul class="tips">${h.tips.slice(0,3).map(x=>`<li>${ic('info')}${x}</li>`).join('')}</ul>`:`<ul class="tips"><li style="color:var(--ok)">${ic('check')}Strong hook. Ready to save.</li></ul>`)}
+function live(k){if(k==='hookDraft'){const m=$('#hk-meter');if(m)m.innerHTML=meter(UI.hookDraft)}}
+
+/* ---------- VIEW: dashboard ---------- */
+function vDash(){
+  const t=today(),ws=ymd(weekStart()),we=ymd(addDays(weekStart(),6)),in7=ymd(addDays(new Date(),7));
+  const up=S.posts.filter(p=>p.status!=='posted'&&p.date>=t).sort(byDT);
+  const doneWk=S.posts.filter(p=>p.status==='posted'&&p.date>=ws&&p.date<=we).length;
+  const goal=+S.settings.weeklyGoal||5,pct=Math.round(doneWk/goal*100);
+  const mo=t.slice(0,7),doneMo=S.posts.filter(p=>p.status==='posted'&&p.date.startsWith(mo)).length;
+  const active=S.ideas.filter(i=>i.status!=='Posted').length;
+  const avg=S.hooks.length?Math.round(S.hooks.reduce((a,h)=>a+hookScore(h.text).s,0)/S.hooks.length):0;
+  const hr=new Date().getHours(),greet=hr<12?'Good morning':hr<18?'Good afternoon':'Good evening';
+  const st=streaks();const next=up[0];
+  const stat=(i,l,v,s)=>`<div class="card stat"><div class="lbl"><span>${ic(i)}</span>${l}</div><div class="val">${v}</div><div class="sub">${s}</div></div>`;
+  const pipe=STAT.map(s=>{const n=S.ideas.filter(i=>i.status===s).length;const m=Math.max(1,S.ideas.length);return `<div class="hrow"><span class="l">${s}</span><div class="bar" style="--c:${STATC[s]}"><i style="width:${n/m*100}%"></i></div><span class="v">${n}</span></div>`}).join('');
+  const topHooks=[...S.hooks].sort((a,b)=>hookScore(b.text).s-hookScore(a.text).s).slice(0,4);
+  const gens=S.jobs.slice(0,4);
+  return `<div class="hero row wrap"><div><div class="h2">${greet}${S.settings.name?', '+esc(S.settings.name):''}</div><div class="muted">${next?`Next up: <b>${esc(next.title)}</b> on ${plat(next.platform).n}, ${fmtDate(next.date)} at ${fmtTime(next.time)}`:'Nothing scheduled yet. Plan your next post.'}</div></div>
+   <div class="row wrap" style="margin-left:auto"><button class="btn" data-a="newIdea">${ic('bulb')}New idea</button><button class="btn" data-a="go" data-r="hooks">${ic('zap')}Write hook</button><button class="btn" data-a="newPost">${ic('cal')}Schedule</button><button class="btn pri" data-a="go" data-r="studio">${ic('sparkles')}Generate</button></div></div>
+  <div class="grid g4">${stat('bulb','Ideas in progress',active,S.ideas.length+' total ideas')}${stat('zap','Hooks written',S.hooks.length,S.hooks.length?'Average score '+avg:'Write your first hook')}${stat('cal','Scheduled',up.filter(p=>p.date<=in7).length,'In the next 7 days')}${stat('check','Posted this month',doneMo,new Date().toLocaleDateString(undefined,{month:'long'}))}</div>
+  <div class="grid g21 mt">
+    <div class="card pad"><h3>${ic('clock')}Upcoming posts<button class="btn sm ghost r" data-a="go" data-r="calendar">Open calendar ${ic('chevR')}</button></h3>${up.length?up.slice(0,5).map(p=>postRow(p)).join(''):empty('cal','No upcoming posts','Schedule one from an idea or the calendar.',`<button class="btn sm" data-a="newPost">${ic('plus')}Schedule post</button>`)}</div>
+    <div class="card pad"><h3>${ic('target')}This week</h3><div class="ringwrap">${ring(pct,doneWk+'/'+goal,'posts')}<div><div class="b" style="font-size:15px">${pct>=100?'Goal reached 🎉':(goal-doneWk)+' to go'}</div><div class="sm muted">Weekly goal: ${goal} posts</div><div class="row mt12">${ic('flame')}<b>${st.cur}-day streak</b></div><div class="xs faint">Best: ${st.best} days</div></div></div></div>
+  </div>
+  <div class="grid g3 mt">
+    <div class="card pad"><h3>${ic('board')}Pipeline<button class="btn sm ghost r" data-a="go" data-r="ideas">Ideas ${ic('chevR')}</button></h3>${S.ideas.length?pipe:empty('bulb','No ideas yet','',`<button class="btn sm" data-a="newIdea">${ic('plus')}New idea</button>`)}</div>
+    <div class="card pad"><h3>${ic('zap')}Top hooks<button class="btn sm ghost r" data-a="go" data-r="hooks">Hooks ${ic('chevR')}</button></h3>${topHooks.length?topHooks.map(h=>`<div class="row" style="padding:7px 0;align-items:flex-start">${scoreTag(h.text)}<div class="sm flex1">${esc(h.text)}</div><button class="ib sm" data-a="copyHook" data-id="${h.id}" title="Copy">${ic('copy')}</button></div>`).join(''):empty('zap','No hooks yet')}</div>
+    <div class="card pad"><h3>${ic('sparkles')}Recent generations<button class="btn sm ghost r" data-a="go" data-r="studio">Studio ${ic('chevR')}</button></h3>${gens.length?gens.map(j=>`<div class="row" style="padding:7px 0"><div class="jico" style="width:30px;height:30px">${ic(catOf(j.cat).i)}</div><div class="flex1"><div class="sm b ellip">${esc(j.name)}</div><div class="xs muted ellip">${esc(j.prompt||'—')}</div></div>${jobPill(j)}</div>`).join(''):empty('sparkles','Nothing generated yet','Open Studio to use image, video, voice and music models.')}</div>
+  </div>`;
+}
+
+/* ---------- VIEW: ideas ---------- */
+function vIdeas(){
+  const q=UI.ideaQ.toLowerCase();
+  const list=S.ideas.filter(i=>(UI.ideaPlat==='all'||i.platform===UI.ideaPlat)&&(!q||(i.title+' '+i.notes+' '+i.tags.join(' ')).toLowerCase().includes(q)));
+  const hooksN=id=>S.hooks.filter(h=>h.ideaId===id).length;
+  const nextPost=id=>S.posts.filter(p=>p.ideaId===id&&p.status!=='posted').sort(byDT)[0];
+  const card=i=>{const np=nextPost(i.id);return `<div class="icard" draggable="true" data-drag="idea" data-id="${i.id}" data-a="editIdea"><div class="row between">${platTag(i.platform)}${np?`<span class="xs faint" style="white-space:nowrap" title="Next post">${parseYmd(np.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span>`:''}</div><div class="t">${esc(i.title)}</div>${i.notes?`<div class="sm muted clamp2">${esc(i.notes)}</div>`:''}${i.tags.length?`<div class="tags">${i.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>`:''}${hooksN(i.id)?`<div class="xs faint mt8">${hooksN(i.id)} hook${hooksN(i.id)>1?'s':''}</div>`:''}</div>`};
+  const tb=`<div class="toolbar"><input class="q" id="idea-q" data-f="ideaQ" value="${esc(UI.ideaQ)}" placeholder="Filter ideas by title, notes or #tag"><select id="idea-plat" data-f="ideaPlat"><option value="all">All platforms</option>${platOpts(UI.ideaPlat)}</select><div class="seg"><button class="${UI.ideaView==='board'?'on':''}" data-a="ideaView" data-v="board">${ic('board')}Board</button><button class="${UI.ideaView==='list'?'on':''}" data-a="ideaView" data-v="list">${ic('list')}List</button></div><span class="sm faint" style="margin-left:auto">${list.length} idea${list.length===1?'':'s'}${UI.ideaView==='board'?' · drag cards between columns':''}</span></div>`;
+  if(!S.ideas.length)return tb+`<div class="card">${empty('bulb','Save your first content idea','Capture it now, write hooks for it, then schedule it.',`<button class="btn pri" data-a="newIdea">${ic('plus')}New idea</button>`)}</div>`;
+  if(UI.ideaView==='list')return tb+`<div class="card" style="overflow:auto"><table class="tbl"><thead><tr><th>Idea</th><th>Status</th><th>Platform</th><th>Tags</th><th>Hooks</th><th>Updated</th></tr></thead><tbody>${list.map(i=>`<tr class="click" data-a="editIdea" data-id="${i.id}"><td><div class="b">${esc(i.title)}</div><div class="xs muted ellip" style="max-width:360px">${esc(i.notes)}</div></td><td>${statusPill(i.status)}</td><td>${platTag(i.platform)}</td><td><div class="tags" style="margin:0">${i.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div></td><td>${hooksN(i.id)}</td><td class="xs muted">${ago(i.updatedAt||i.createdAt)}</td></tr>`).join('')}</tbody></table></div>`;
+  return tb+`<div class="board">${STAT.map(s=>{const it=list.filter(i=>i.status===s);return `<div class="col" data-drop="status" data-status="${s}"><h4><span class="pdot" style="--c:${STATC[s]}"></span>${s}<span class="n">${it.length}</span>${s==='Idea'?`<button class="ib sm" style="margin-left:auto" data-a="newIdea" title="New idea">${ic('plus')}</button>`:''}</h4>${it.map(card).join('')}</div>`}).join('')}</div>`;
+}
+function ideaModal(id,preset={}){
+  const i=id?S.ideas.find(x=>x.id===id):{title:'',notes:'',platform:'tiktok',status:'Idea',tags:[],...preset};if(!i)return;
+  const hk=id?S.hooks.filter(h=>h.ideaId===id):[],ps=id?S.posts.filter(p=>p.ideaId===id).sort(byDT):[];
+  openModal(id?'Edit idea':'New idea',`
+   <div class="fld"><label>Title</label><input id="m-title" value="${esc(i.title)}" placeholder="e.g. Same prompt, 3 image models"></div>
+   <div class="fld"><label>Notes</label><textarea id="m-notes" rows="4" placeholder="Angle, shots, references, models to use…">${esc(i.notes)}</textarea></div>
+   <div class="grid g3"><div class="fld"><label>Platform</label><select id="m-plat">${platOpts(i.platform)}</select></div><div class="fld"><label>Status</label><select id="m-status">${STAT.map(s=>`<option ${s===i.status?'selected':''}>${s}</option>`).join('')}</select></div><div class="fld"><label>Tags</label><input id="m-tags" value="${esc(i.tags.join(', '))}" placeholder="ai, tutorial"></div></div>
+   ${id?`<div class="grid g2"><div><div class="xs b muted">HOOKS (${hk.length})</div>${hk.slice(0,3).map(h=>`<div class="sm mt8">“${esc(h.text)}”</div>`).join('')||'<div class="sm faint mt8">None yet</div>'}</div><div><div class="xs b muted">POSTS (${ps.length})</div>${ps.slice(0,3).map(p=>`<div class="sm mt8">${fmtDate(p.date)} · ${plat(p.platform).n}${p.status==='posted'?' ✓':''}</div>`).join('')||'<div class="sm faint mt8">Not scheduled</div>'}</div></div>`:''}`,
+   `${id?`<button class="btn danger" data-a="delIdea" data-id="${id}">${ic('trash')}Delete</button><span style="flex:1"></span><button class="btn" data-a="ideaHook" data-id="${id}">${ic('zap')}Hooks</button><button class="btn" data-a="ideaSchedule" data-id="${id}">${ic('cal')}Schedule</button><button class="btn" data-a="ideaGen" data-id="${id}">${ic('sparkles')}Generate</button>`:'<button class="btn" data-a="closeModal">Cancel</button>'}<button class="btn pri" data-a="saveIdea" data-id="${id||''}">${ic('check')}Save</button>`);
+  setTimeout(()=>$('#m-title')?.focus(),30);
+}
+function saveIdea(id,silent){const title=$('#m-title').value.trim();if(!title){toast('Give the idea a title');return false}
+  const d={title,notes:$('#m-notes').value.trim(),platform:$('#m-plat').value,status:$('#m-status').value,tags:$('#m-tags').value.split(',').map(s=>s.trim().replace(/^#/,'')).filter(Boolean),updatedAt:Date.now()};
+  let rec;if(id){rec=S.ideas.find(x=>x.id===id);Object.assign(rec,d)}else{rec={id:uid(),createdAt:Date.now(),...d};S.ideas.unshift(rec);act('idea')}
+  save();if(!silent){closeModal();render();toast(id?'Idea updated':'Idea saved')}return rec}
+
+/* ---------- VIEW: hooks ---------- */
+function vHooks(){
+  const q=UI.hookQ.toLowerCase();
+  let list=S.hooks.filter(h=>!q||(h.text+' '+ideaName(h.ideaId)).toLowerCase().includes(q));
+  list.sort(UI.hookSort==='score'?(a,b)=>hookScore(b.text).s-hookScore(a.text).s:UI.hookSort==='rating'?(a,b)=>(b.rating||0)-(a.rating||0):(a,b)=>b.createdAt-a.createdAt);
+  const stars=h=>`<span class="stars">${[1,2,3,4,5].map(n=>`<button class="${(h.rating||0)>=n?'on':''}" data-a="rate" data-id="${h.id}" data-v="${n}" title="${n} star${n>1?'s':''}">${ic('star')}</button>`).join('')}</span>`;
+  return `<div class="grid g2">
+   <div class="card pad"><h3>${ic('sparkles')}Hook generator</h3>
+     <div class="row"><input id="hb-topic" data-live="hookTopic" value="${esc(UI.hookTopic)}" placeholder="Topic, e.g. AI music videos"><button class="btn pri" data-a="hookGen">${ic('sparkles')}Generate</button></div>
+     <div class="xs faint mt8">Uses proven hook formulas, filled in with your topic and sorted by score.</div>
+     <div class="mt12">${UI.hookSugs.length?UI.hookSugs.map((s,i)=>`<div class="sug">${scoreTag(s)}<div class="flex1 sm">${esc(s)}</div><button class="ib sm" data-a="hookEdit" data-i="${i}" title="Edit">${ic('edit')}</button><button class="btn sm" data-a="hookSaveSug" data-i="${i}">${ic('plus')}Save</button></div>`).join(''):`<div class="chips">${['AI music videos','image prompting','cinematic AI shots','faceless channels','product ads'].map(x=>`<button class="chipbtn" data-a="hookTopic" data-v="${x}">${x}</button>`).join('')}</div>`}</div>
+   </div>
+   <div class="card pad"><h3>${ic('edit')}Write a hook</h3>
+     <textarea id="hk-text" data-live="hookDraft" rows="3" placeholder="The first line of your video. Make them stop scrolling…">${esc(UI.hookDraft)}</textarea>
+     <div id="hk-meter" class="mt8">${meter(UI.hookDraft)}</div>
+     <div class="row mt12"><select id="hk-idea" data-f="hookIdea">${ideaOpts(UI.hookIdea)}</select><button class="btn pri" data-a="hookSave">${ic('check')}Save hook</button></div>
+   </div></div>
+  <div class="card pad mt"><h3>${ic('zap')}Saved hooks <span class="pill">${S.hooks.length}</span></h3>
+   <div class="toolbar" style="margin-bottom:6px"><input class="q" id="hook-q" data-f="hookQ" value="${esc(UI.hookQ)}" placeholder="Filter hooks"><div class="seg">${[['new','Newest'],['score','Score'],['rating','Rating']].map(([k,l])=>`<button class="${UI.hookSort===k?'on':''}" data-a="hookSort" data-v="${k}">${l}</button>`).join('')}</div></div>
+   ${list.length?list.map(h=>`<div class="hk">${scoreTag(h.text)}<div class="flex1"><div class="txt">${esc(h.text)}</div><div class="row xs muted mt8" style="gap:12px">${stars(h)}${h.ideaId?`<span class="row" style="gap:4px">${ic('link')}${esc(ideaName(h.ideaId))}</span>`:''}<span>${ago(h.createdAt)}</span></div></div><button class="ib sm" data-a="copyHook" data-id="${h.id}" title="Copy">${ic('copy')}</button><button class="ib sm" data-a="hookStudio" data-id="${h.id}" title="Use as video prompt">${ic('sparkles')}</button><button class="ib sm" data-a="delHook" data-id="${h.id}" title="Delete">${ic('trash')}</button></div>`).join(''):empty('zap',S.hooks.length?'No hooks match':'No saved hooks yet','Generate some above or write your own.')}
+  </div>`;
+}
+
+/* ---------- VIEW: calendar ---------- */
+function vCal(){
+  const{y,m}=UI.cal,first=new Date(y,m,1),start=weekStart(first),t=today();
+  let n=42;if(addDays(start,35).getMonth()!==m)n=35;
+  const cells=[];for(let i=0;i<n;i++)cells.push(addDays(start,i));
+  const byDay={};S.posts.forEach(p=>(byDay[p.date]=byDay[p.date]||[]).push(p));
+  const mo=`${y}-${pad(m+1)}`,monthPosts=S.posts.filter(p=>p.date.startsWith(mo)).sort(byDT);
+  const ready=S.ideas.filter(i=>['Ready','Producing'].includes(i.status)&&!S.posts.some(p=>p.ideaId===i.id&&p.status!=='posted'));
+  return `<div class="calhead"><button class="ib" data-a="calNav" data-v="-1" title="Previous month">${ic('chevL')}</button><h2>${first.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</h2><button class="ib" data-a="calNav" data-v="1" title="Next month">${ic('chevR')}</button><button class="btn sm" data-a="calNav" data-v="0">Today</button><div class="legend">${Object.values(PLATFORMS).map(p=>`<span><span class="pdot" style="--c:${p.c}"></span>${p.n}</span>`).join('')}</div></div>
+  <div class="calwrap"><div><div class="calgrid">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="dow">${d}</div>`).join('')}
+   ${cells.map(d=>{const ds=ymd(d);const ps=(byDay[ds]||[]).sort(byDT);return `<div class="day ${d.getMonth()!==m?'out':''} ${ds===t?'today':''}" data-a="dayClick" data-day="${ds}" data-drop="day"><div class="dn">${d.getDate()}</div>${ps.slice(0,3).map(p=>`<div class="chip ${p.status==='posted'?'done':''}" style="--c:${plat(p.platform).c}" draggable="true" data-drag="post" data-id="${p.id}" data-a="editPost" title="${esc(p.title)} · ${plat(p.platform).n}">${fmtTime(p.time)} ${esc(p.title)}</div>`).join('')}${ps.length>3?`<div class="xs faint" style="margin-top:3px">+${ps.length-3} more</div>`:''}</div>`}).join('')}</div>
+   <div class="xs faint mt8">Click a day to schedule a post. Drag posts to move them.</div></div>
+   <div class="grid" style="align-content:start">
+    <div class="card pad"><h3>${ic('cal')}This month <span class="pill">${monthPosts.length}</span></h3>${monthPosts.length?monthPosts.map(p=>postRow(p,true)).join(''):empty('cal','No posts this month')}</div>
+    <div class="card pad"><h3>${ic('send')}Ready to schedule</h3>${ready.length?ready.map(i=>`<div class="row" style="padding:6px 0"><div class="flex1"><div class="sm b ellip">${esc(i.title)}</div>${platTag(i.platform)}</div><button class="btn sm" data-a="ideaSchedule" data-id="${i.id}">Schedule</button></div>`).join(''):'<div class="sm faint">Ideas marked Producing or Ready show up here.</div>'}</div>
+   </div></div>`;
+}
+function postModal(id,preset={}){
+  const p=id?S.posts.find(x=>x.id===id):{title:'',ideaId:'',platform:'tiktok',date:today(),time:'18:00',status:'scheduled',hookId:'',notes:'',...preset};if(!p)return;
+  const hooks=S.hooks.filter(h=>!p.ideaId||h.ideaId===p.ideaId||h.id===p.hookId);
+  openModal(id?'Edit post':'Schedule a post',`
+   <div class="fld"><label>Linked idea</label><select id="m-idea">${ideaOpts(p.ideaId,'None')}</select></div>
+   <div class="fld"><label>Post title</label><input id="m-ptitle" value="${esc(p.title)}" placeholder="What are you posting?"></div>
+   <div class="grid g3"><div class="fld"><label>Platform</label><select id="m-pplat">${platOpts(p.platform)}</select></div><div class="fld"><label>Date</label><input type="date" id="m-date" value="${p.date}"></div><div class="fld"><label>Time</label><input type="time" id="m-time" value="${p.time}"></div></div>
+   <div class="grid g2"><div class="fld"><label>Hook</label><select id="m-hook"><option value="">No hook</option>${hooks.map(h=>`<option value="${h.id}" ${p.hookId===h.id?'selected':''}>${esc(h.text.slice(0,70))}</option>`).join('')}</select></div><div class="fld"><label>Status</label><select id="m-pstatus"><option value="scheduled" ${p.status!=='posted'?'selected':''}>Scheduled</option><option value="posted" ${p.status==='posted'?'selected':''}>Posted</option></select></div></div>
+   <div class="fld"><label>Caption / notes</label><textarea id="m-pnotes" rows="3" placeholder="Caption, hashtags, links…">${esc(p.notes)}</textarea></div>`,
+   `${id?`<button class="btn danger" data-a="delPost" data-id="${id}">${ic('trash')}Delete</button><span style="flex:1"></span>${p.status!=='posted'?`<button class="btn" data-a="markPosted" data-id="${id}">${ic('check')}Mark posted</button>`:''}`:'<button class="btn" data-a="closeModal">Cancel</button>'}<button class="btn pri" data-a="savePost" data-id="${id||''}">${ic('check')}Save</button>`);
+}
+function savePost(id,forcePosted){
+  const title=$('#m-ptitle').value.trim(),date=$('#m-date').value;if(!title)return toast('Add a post title');if(!date)return toast('Pick a date');
+  const d={title,ideaId:$('#m-idea').value,platform:$('#m-pplat').value,date,time:$('#m-time').value||'09:00',hookId:$('#m-hook').value,status:forcePosted?'posted':$('#m-pstatus').value,notes:$('#m-pnotes').value.trim()};
+  let p;if(id){p=S.posts.find(x=>x.id===id);const was=p.status;if(p.date!==d.date||p.time!==d.time)p.notified=false;Object.assign(p,d);if(was!=='posted'&&d.status==='posted')posted(p)}
+  else{p={id:uid(),...d};S.posts.push(p);act('sched');if(p.status==='posted')posted(p)}
+  if(d.ideaId){const i=S.ideas.find(x=>x.id===d.ideaId);if(i&&p.status!=='posted'&&['Idea','Scripting','Producing'].includes(i.status)){i.status='Ready';i.updatedAt=Date.now()}}
+  save();closeModal();render();toast(p.status==='posted'?'Marked as posted ✓':'Post scheduled for '+fmtDate(p.date));
+}
+function posted(p){act('post');const i=S.ideas.find(x=>x.id===p.ideaId);if(i){i.status='Posted';i.updatedAt=Date.now()}}
+
+/* ---------- video prompt guides (per model family) ---------- */
+const A='«',Z='»';// placeholder markers (angle brackets are Seedance's sound-effect syntax)
+const L=s=>A+s+Z;
+function refTags(m,f,kl){const out=[],cnt={image:0,video:0,audio:0};
+  m.refs.filter(r=>!['start_image','end_image','mask','location_image'].includes(r)).forEach(r=>{
+    const t=/video/.test(r)?'video':/audio/.test(r)?'audio':'image';
+    String(f['ref:'+r]||'').split(/[\s,]+/).filter(u=>/^https?:\/\//.test(u)).forEach(()=>{cnt[t]++;out.push({tag:kl?`@${t}_${cnt[t]}`:`@${t}${cnt[t]}`,t,role:r})})});
+  return out}
+const has=(f,r)=>String(f['ref:'+r]||'').trim().length>0;
+const story=c=>c.f.prompt&&c.f.prompt.trim()&&!/^\[|^Camera|^Edit|^Extend|^Continue/.test(c.f.prompt.trim())?c.f.prompt.trim().replace(/[.\s]+$/,''):L('one-sentence summary of what happens');
+const pre=(c,end='. ')=>{const v=story(c);return v.startsWith('«')?end.replace(/[^\n]/g,''):v+end};
+const bindLines=(tags,kl)=>tags.map((t,i)=>t.t==='image'?`${L('Character '+'ABCDEFGHIJ'[tags.filter(x=>x.t==='image').indexOf(t)]+' / product / place')} = ${t.tag}. Use only its appearance${t.role==='character_images'?'':' and clothing'}; do not use the image background.`:t.t==='video'?`${t.tag} = motion reference. Copy only its ${L('camera move / body movement')}, not the people or setting.`:`${t.tag} = audio reference for ${L('voice / music / rhythm')}.`).join('\n');
+const audioBlock=c=>c.audioOn===false?'':`\n\n[AUDIO]\n(${L('music, or delete this line')})\n<${L('sound effect / ambience')}>\nDialogue language: ${L('e.g. American English / Filipino')}. ${L('Character')} says: {${L('line')}}`;
+const VG={
+  seedance:{fmt:'Director brief',ph:'[GOAL] … [SHOT 1 | 0–5s | camera] … [VISUAL STYLE] … [AUDIO]',
+    tips:['One [SHOT] block per continuous camera shot. Start a new block only for a real cut.','Bind every reference by tag (@image1, @video1, @audio1) and say what to take from it.','Audio syntax: (music) <sound effect> {dialogue} [subtitle]. State the dialogue language first.','Describe emotions as visible cues: shallow breathing, trembling hands, eyes widen.','Keep resolution, duration and aspect ratio in the settings, not the prompt.'],
+    needs:c=>c.mode==='video_edit'?[['video_references','the video to edit']]:c.mode==='video_extension'?[['video_references','the video to extend']]:[],
+    warn:c=>c.mode==='video_extension'&&!c.f.extension_mode?'Pick an Extend direction (forward or backward).':'',
+    tpl:c=>{const d=c.dur||5;
+      if(c.mode==='video_edit')return `Edit @video1. Keep the camera motion, timing, framing and everything not mentioned unchanged.\nChange: ${L('what to replace or restyle, e.g. replace the jacket with the outfit in @image1')}.\nKeep: ${L('face/identity, background, lighting')}.${c.tags.filter(t=>t.t==='image').length?'\n\n'+bindLines(c.tags.filter(t=>t.t==='image')):''}`;
+      if(c.mode==='video_extension'){const fw=c.f.extension_mode!=='backward';return `Extend @video1 ${fw?'forward':'backward'} by ${d} seconds, continuing seamlessly from its ${fw?'last':'first'} frame. Same subject, outfit, lighting and camera style.\n\n[SHOT 1 | 0–${d}s | ${L('camera continues: e.g. slow push-in')}]\nAction: ${L('what happens '+(fw?'next':'before'))}.\nEnd state: ${L('the final frame')}.`+audioBlock(c)}
+      const refs=c.tags.length?`\n\n[REFERENCES]\n${bindLines(c.tags)}`:'';
+      const frames=(has(c.f,'start_image')?'\nStart frame: the start frame image. ':'')+(has(c.f,'end_image')?'End on the end frame image.':'');
+      return `[GOAL]\n${L('Video type')} of ${L('subject')}: ${story(c)}. ${d} seconds, one continuous shot.${refs}\n\n[SHOT 1 | 0–${d}s | ${L('shot size, angle, camera move')}]\nCamera: ${L('e.g. medium shot, eye level, slow push-in')}.${frames}\nInitial state: ${L('where the subject is and what they are doing')}.\nAction: ${L('connected actions, in order')}.\nEnd state: ${L('what is visible at the end')}.\n\n[VISUAL STYLE]\n${L('lighting, color grade, lens feel, mood')}`+audioBlock(c)+`\n\n[MAINTAIN CONSISTENCY]\nSame subject, outfit, headcount and layout throughout.`}},
+  kling4:{fmt:'Subject · motion · scene · camera',kl:1,ph:'A woman in a red raincoat runs across a neon street at night, tracking shot from the side…',
+    tips:['Text-to-video: subject + motion + scene + camera + lighting/style, in plain sentences.','Image-to-video: the start frame already shows the look, so describe the motion and the camera, not the appearance.','Reference-to-video: name each reference by tag (@image_1…) and say what it is. If tags are ignored, describe it in words (“the woman from the first reference”).','Video edit: one clear instruction: what to change and what to keep.','Up to 30 s. For longer stories, describe beats in order with rough timing.'],
+    needs:c=>c.mode==='image-to-video'?[['start_image','a start frame']]:c.mode==='reference-to-video'?[['image_references','at least one reference image']]:c.mode==='video-edit'?[['video_references','the base video (first URL)']]:[],
+    tpl:c=>{const d=c.dur||10;
+      if(c.mode==='video-edit')return `In @video_1, ${L('change: e.g. replace the car with the motorcycle in @image_1')}. Keep the camera movement, timing, people and background unchanged.`;
+      if(c.mode==='image-to-video')return `${L('Subject')} ${L('motion: e.g. turns toward the camera and smiles')}. ${L('Secondary motion: hair and coat move in the wind')}.\nCamera: ${L('e.g. slow push-in, then hold')}.\nOver ${d} seconds${has(c.f,'end_image')?', ending exactly on the end frame':''}.${c.f.dynamic_range==='hdr'?' Bright highlights, deep shadows.':''}`;
+      const refs=c.mode==='reference-to-video'&&c.tags.length?bindLines(c.tags,1)+'\n\n':'';
+      return `${refs}${pre(c,'.\n')}Subject: ${L('who/what, key details')}.\nMotion: ${L('what moves and how, in order')}.\nScene: ${L('setting, time of day, weather')}.\nCamera: ${L('shot size, angle, movement')}.\nStyle: ${L('lighting, color, film look')}.`}},
+  kling3:{fmt:'Shot description · multi-shot',ph:'Close-up of a chef plating a dish, steam rising, slow push-in, warm kitchen light…',
+    tips:['Write one clear shot: subject + action + scene + camera + style.','With a start frame, describe the motion only.','Sound is on by default; describe sounds or lines in the prompt (“she whispers: …”).','Multi-shot: use “Insert multi-shot JSON” and write one prompt per shot.'],multi:1,
+    needs:c=>c.m.id==='kling_o3_image_reference'?[['image_references','at least one reference image']]:[],
+    tpl:c=>{const refs=c.m.id==='kling_o3_image_reference'&&c.tags.length?c.tags.map((t,i)=>`Reference image ${i+1} is ${L('the character / product / location')}.`).join(' ')+'\n':'';
+      return `${refs}${pre(c,'.\n')}${L('Subject and key details')} ${L('action')} in ${L('setting')}.\nCamera: ${L('shot size, angle, movement')}.\nStyle: ${L('lighting, mood, film look')}.\nSound: ${L('ambience, effects, or a spoken line')}.`}},
+  klingI2V:{fmt:'Short shot description',ph:'Slow push-in on a lone surfer at sunrise, waves rolling, golden light…',
+    tips:['Keep it to 1–3 sentences: subject + action + camera + style.','With a start frame, describe only what moves and how the camera moves.','Name one main action. Too many actions in 5 s look rushed.'],
+    tpl:c=>has(c.f,'start_image')?`${L('Subject')} ${L('main action')}. ${L('Background motion')}. Camera: ${L('e.g. slow push-in')}. ${L('Mood / lighting stays as in the image')}.`:`${pre(c)}${L('Subject')} ${L('action')} in ${L('setting')}. Camera: ${L('movement')}. Style: ${L('lighting, color, mood')}.`},
+  klingFrames:{fmt:'Frame-to-frame motion',ph:'The camera glides from the doorway to the window as the girl turns around…',
+    tips:['Describe the motion that takes the start frame to the end frame.','Don’t re-describe what the frames already show. Say what changes and how the camera travels.'],
+    needs:()=>[['start_image','a start frame']],
+    tpl:c=>`From the start frame${has(c.f,'end_image')?' to the end frame':''}: ${L('what changes, e.g. she turns, walks to the window and looks out')}.\nCamera: ${L('how it travels between the two frames')}.\nPace: ${L('smooth and slow / quick')}.\nSound: ${L('ambience or a spoken line')}.`},
+  veo:{fmt:'Cinematic paragraph + audio',ph:'Medium shot, slow dolly-in. A barista in a cozy café … The barista says: "…" Sound: espresso hiss, soft jazz.',
+    tips:['Order: shot and camera → subject → action → setting → lighting/style → audio.','Dialogue: write who speaks and put the line in quotes: The man says: "We’re late."','Describe sound separately: ambience, effects, music.','With a start frame, focus on motion and sound.','Clips are 4, 6 or 8 seconds. Keep it to one or two beats.'],
+    tpl:c=>`${L('Shot size')}, ${L('camera move')}. ${has(c.f,'start_image')?'Starting from the image, ':''}${L('Subject with key details')} ${L('action')} in ${L('setting')}. ${pre(c,'.\n')}Lighting and style: ${L('e.g. warm golden hour, shallow depth of field, 35mm film')}.\n${L('Character')} says: "${L('line')}"\nSound: ${L('ambience and effects')}. Music: ${L('style, or none')}.`},
+  gemini:{fmt:'Mode-based instruction',ph:'Describe the scene, or for Edit / Extend write the change or what happens next…',
+    tips:['Text/image-to-video: camera → subject → action → setting → style → sound (native audio).','Reference-to-video: say what each reference is: “The woman in reference image 1…”.','Edit: one instruction, e.g. “Change the sky to a stormy sunset. Keep everything else.”','Extend: describe only what happens next, matching the clip’s style.'],
+    needs:c=>c.mode==='image-to-video'?[['start_image','a start frame']]:c.mode==='edit'?[['video_references','the source video (3–15 s)']]:c.mode==='extend'?[['video_references','the clip to extend']]:c.mode==='reference-to-video'?[['image_references','reference images or a video']]:[],
+    tpl:c=>c.mode==='edit'?`Change ${L('what to change')} to ${L('the new look')}. Keep the people, camera movement and timing unchanged.`:c.mode==='extend'?`Continue the clip: ${L('what happens next')}. Same characters, lighting and camera style. Sound: ${L('continue ambience / line')}.`:c.mode==='reference-to-video'?`${c.tags.map((t,i)=>`${t.t==='video'?'Reference video':'Reference image'} ${i+1} is ${L('who/what')}.`).join(' ')}\n${L('Shot and camera')}. ${pre(c)}${L('Setting and style')}.\nSound: ${L('ambience, effects, dialogue in quotes')}.`:`${L('Shot size and camera move')}. ${L('Subject')} ${L('action')} in ${L('setting')}. ${pre(c,'.\n')}Style: ${L('lighting, color, lens')}.\nSound: ${L('ambience and effects')}. ${L('Character')} says: "${L('line')}"`},
+  wan:{fmt:'Subject · scene · motion · aesthetics',ph:'A girl in a yellow raincoat jumps into a puddle on a rainy street, low angle, slow motion…',
+    tips:['Formula: subject + scene + motion, then aesthetics (lighting, time of day, shot size, composition, lens) and style.','Wan 2.7 / 3.0 generate synced audio: describe sounds and put spoken lines in quotes.','With references, say what each one is (“the man from the first reference image”).','Wan 3.0: turn on Thinking for long or complex prompts.'],
+    tpl:c=>`${pre(c,'.\n')}Subject: ${L('who/what, appearance')}.\nScene: ${L('setting, time of day, weather')}.\nMotion: ${L('what moves, in order')}.\nCamera and lighting: ${L('shot size, angle, movement, light source')}.\nStyle: ${L('e.g. cinematic realism / anime / stop-motion')}.`+(c.m.id==='wan2_6'?'':`\nAudio: ${L('ambience, effects')}. ${L('Character')} says: "${L('line')}"`)},
+  hailuo:{fmt:'Description + [camera commands]',ph:'A fox walks through a snowy forest at dusk. [Tracking shot] [Push in]',
+    tips:['Write the scene in plain sentences, then camera moves in square brackets.','Commands: [Push in] [Pull out] [Pan left] [Pan right] [Tilt up] [Tilt down] [Truck left] [Truck right] [Pedestal up] [Tracking shot] [Static shot] [Shake].','Combine up to 3 in one bracket for a single move: [Pan left, Pedestal up].','Hailuo is strong on facial emotion. Describe expressions concretely.'],
+    tpl:c=>`${pre(c)}${L('Subject')} ${L('action, with a visible expression')} in ${L('setting')}, ${L('lighting and mood')}. [${L('Push in')}]`},
+  h3:{fmt:'Reference-tagged brief',ph:'@image1 is the hero… Camera … Sound …',
+    tips:['Tag references in order: @image1…, @video1…, @audio1… and say what each one is for.','Audio references need at least one image or video reference.','Keep one main action per shot. H3 Max is the fast version.'],
+    tpl:c=>`${c.tags.length?bindLines(c.tags)+'\n\n':''}${pre(c,'.\n')}Camera: ${L('shot size, angle, movement')}.\nAction: ${L('in order')}.\nStyle: ${L('lighting, color, mood')}.\nSound: ${L('ambience, effects, dialogue')}.`},
+  grok:{fmt:'Natural description + audio',ph:'A drone shot over a misty mountain lake at sunrise, birds calling…',
+    tips:['Write it like a short scene description: subject, action, setting, camera, mood.','Audio is generated: mention sounds or a spoken line.','Grok Video 1.5: audio references need at least one image reference.'],
+    tpl:c=>`${pre(c)}${L('Subject')} ${L('action')} in ${L('setting')}. Camera: ${L('movement')}. Mood: ${L('lighting, color')}. Sound: ${L('ambience, effects or a line')}.`},
+  flux:{fmt:'Keyframe storyboard',ph:'From the start frame … through the middle frames … ending on the end frame…',
+    tips:['With frames: describe how the video moves through them in order (start → middle frames → end).','Video URL = continuation: describe what happens after the clip ends.','Up to 20 s. Describe beats with rough timing.','Audio (speech, effects, ambience) is generated. Describe it.'],
+    tpl:c=>{const d=c.dur||5;if(has(c.f,'video_references'))return `Continue the video: ${L('what happens next')}. Same characters, setting and camera style.\nSound: ${L('ambience / line')}.`;
+      const kf=has(c.f,'start_image')||has(c.f,'image_references');
+      return kf?`Start on the start frame: ${L('first beat')}.\nThen, through the middle frames in order: ${L('beats')}.\n${has(c.f,'end_image')?'End exactly on the end frame':'End on'}: ${L('final beat')}.\nCamera: ${L('movement')}. ${d} seconds.\nSound: ${L('ambience, effects, line')}.`:`0–${Math.ceil(d/2)}s: ${L('first beat')}.\n${Math.ceil(d/2)}–${d}s: ${L('second beat')}.\nSubject: ${L('who/what')}. Setting: ${L('where')}. Camera: ${L('movement')}. Style: ${L('look')}.\nSound: ${L('ambience, effects, line')}.`}},
+  intone:{fmt:'Staging for recorded lines',ph:'Two friends at a café table, character 1 on the left… medium two-shot, slow push-in',
+    tips:['The words come from your voice recordings, in order. The prompt sets the room, blocking and camera.','Character images: one person each, readable front face. Character 1 is on the left when both are in frame.','Ask for action, several places or camera moves to get up to five shots.','Length = your recordings (2–30 s) + 2.5 s.'],
+    needs:()=>[['character_images','1–2 character images'],['audio_references','1–6 voice recordings']],
+    tpl:c=>`${L('Where they are: e.g. a small café by the window, afternoon light')}.\nCharacter 1 (left) speaks @audio1${c.tags.filter(t=>t.t==='audio').length>1?'; character 2 (right) replies with @audio2':''}.\nBlocking: ${L('seated across a table / walking / to camera')}.\nCamera: ${L('medium two-shot, slow push-in; cut to close-ups on each line')}.`},
+  motion:{fmt:'Optional scene note',ph:'Optional: describe the outfit, background or lighting. Motion comes from the video.',
+    tips:['All the movement comes from the reference video. Don’t describe the dance or moves.','Use the prompt only for things the image or video doesn’t settle: background, lighting, clothing details.','Pick “Background from” to keep the image’s or the video’s background.'],
+    needs:()=>[['image_references','the character image'],['video_references','the motion video']],
+    tpl:()=>`Keep the character’s face and outfit from the image. ${L('Background: e.g. a rooftop at night with city lights')}. ${L('Lighting: soft neon rim light')}.`},
+  edit:{fmt:'One edit instruction',ph:'Change the daytime sky to a stormy sunset. Keep everything else unchanged.',
+    tips:['Say exactly what to change, then what to keep.','One change per run gives the cleanest result. Chain edits for more.','Reference images (Kling Omni Edit): say what each one replaces.'],
+    needs:()=>[['video_references','the source video']],
+    tpl:c=>`${L('Change / replace / remove')} ${L('what')} ${c.tags.some(t=>t.t==='image')?`with the ${L('object / outfit')} in reference image 1`:'to '+L('new look')}. Keep the people, camera movement, timing and everything else unchanged.`},
+  simple:{fmt:'Subject · action · camera · style',ph:'A paper boat drifts down a rain gutter, close-up tracking shot, soft overcast light…',
+    tips:['1–3 sentences: subject + action + setting + camera + style.','With a start frame, describe only the motion.'],
+    tpl:c=>`${pre(c)}${L('Subject')} ${L('action')} in ${L('setting')}. Camera: ${L('movement')}. Style: ${L('lighting, mood')}.`}
+};
+const VMAP={seedance_2_0:'seedance',seedance_2_0_mini:'seedance',seedance_2_5:'seedance',seedance_2_5_flash:'seedance',cinematic_studio_video_4_0:'seedance',
+  kling4_0:'kling4',kling_4_0_flash:'kling4',kling3_0:'kling3',kling_o3_image_reference:'kling3',kling_o3_flf:'klingFrames',kling2_6:'klingI2V',kling3_0_turbo:'klingI2V',
+  kling_video_edit:'edit',flux_3_video_edit:'edit',kling3_0_motion_control:'motion',veo3_1:'veo',veo3_1_lite:'veo',gemini_omni_flash_1_1:'gemini',gemini_omni_flash_1_2:'gemini',
+  wan2_6:'wan',wan2_7:'wan',wan3_0:'wan',wan3_0_prime:'wan',minimax_hailuo:'hailuo',minimax_h3:'h3',minimax_h3_max:'h3',grok_video:'grok',grok_video_v15:'grok',grok_video_v15_lite:'grok',
+  flux_3_video:'flux',happy_horse_video:'simple',intone:'intone'};
+const guideOf=m=>VG[VMAP[m.id]];
+function gctx(m,f){const g=guideOf(m);return{m,f,g,mode:f.mode,dur:+f.duration||0,tags:refTags(m,f,g&&g.kl),audioOn:f.generate_audio===false||f.sound==='off'||f.sound===false?false:true}}
+function missing(m,f){const g=guideOf(m);if(!g||!g.needs)return[];return g.needs(gctx(m,f)).filter(([r])=>!has(f,r))}
+function guideHTML(m,f){const g=guideOf(m);if(!g)return'';const c=gctx(m,f),miss=missing(m,f),w=g.warn?g.warn(c):'';
+  return `<div class="guide mt12"><div class="row wrap"><span class="b sm">${ic('info')}How to prompt ${esc(m.name)}</span><span class="pill acc">${g.fmt}${c.mode&&m.fields.some(x=>x.k==='mode'&&x.o.length>2)?' · '+esc(c.mode):''}</span><span class="flex1"></span>${UI._undo&&UI._undo.id===m.id?`<button class="btn sm ghost" data-a="undoTpl">Undo</button>`:''}${g.multi?`<button class="btn sm" data-a="insertMulti">${ic('list')}Insert multi-shot JSON</button>`:''}<button class="btn sm pri" data-a="insertTpl">${ic('edit')}Insert template</button></div>
+   ${miss.length||w?`<div class="note warn mt8">${ic('info')}<div>${miss.length?'Needs '+miss.map(x=>x[1]).join(' and ')+(c.mode?' in '+esc(c.mode)+' mode':'')+'. Add the URL below.':''} ${w}</div></div>`:''}
+   ${c.tags.length?`<div class="row wrap mt8" style="gap:6px"><span class="xs faint">Your references:</span>${c.tags.map(t=>`<button class="chipbtn" data-a="insertTag" data-v="${t.tag}" title="${esc(ROLE[t.role]||t.role)}">${t.tag}</button>`).join('')}</div>`:''}
+   <details class="mt8"><summary>Tips for this model</summary><ul class="tips">${g.tips.map(t=>`<li>${ic('check')}<span>${esc(t)}</span></li>`).join('')}</ul></details></div>`}
+function insertTpl(){const m=curModel(),f=formOf(m),g=guideOf(m);if(!g)return;UI._undo={id:m.id,p:f.prompt||''};f.prompt=g.tpl(gctx(m,f));render();const t=$('#sf-prompt');if(t){t.focus();const i=t.value.indexOf(A);if(i>=0)t.setSelectionRange(i,t.value.indexOf(Z,i)+1)}toast('Template inserted. Press Tab to jump to each «…» blank.')}
+function insertMulti(){const m=curModel(),f=formOf(m),d=+f.duration||5,a=Math.max(1,Math.floor(d/2));let x={};try{x=f.__extra?JSON.parse(f.__extra):{}}catch(e){}
+  x.multi_shots=true;x.multi_prompt=[{prompt:'Shot 1: '+L('wide establishing shot, what happens'),duration:a},{prompt:'Shot 2: '+L('close-up, what happens next'),duration:d-a}];
+  f.__extra=JSON.stringify(x,null,2);render();const det=$('details.mt12');if(det)det.open=true;toast('Multi-shot JSON added under Advanced. Shot durations must add up to '+d+' s.')}
+
+/* ---------- VIEW: studio ---------- */
+const curModel=()=>MODELS.find(m=>m.id===UI.model)||MODELS[0];
+function formOf(m){if(!UI.forms[m.id]){const f={prompt:'',__idea:UI.pendingIdea||''};m.fields.forEach(x=>{if(x.d!==undefined&&x.d!=='')f[x.k]=x.d});UI.forms[m.id]=f}
+  const f=UI.forms[m.id];if(UI.pendingPrompt!=null){f.prompt=UI.pendingPrompt;f.__idea=UI.pendingIdea||f.__idea;UI.pendingPrompt=null;UI.pendingIdea=''}return f}
+function promptLabel(m){return m.np?'':m.cat==='voice'?'Script':m.cat==='music'?'Describe the music':m.cat==='sfx'?'Describe the sound':m.po?'Prompt (optional)':'Prompt'}
+function fieldHTML(x,v){const id='sf-'+x.k;
+  if(x.t==='sel')return `<div class="fld"><label for="${id}">${x.l}</label><select id="${id}" data-sf="${x.k}">${x.o.map(o=>`<option value="${esc(o)}" ${String(o)===String(v??'')?'selected':''}>${o===''?'Default':esc(o)}</option>`).join('')}</select></div>`;
+  if(x.t==='num')return `<div class="fld"><label for="${id}">${x.l}</label><input type="number" id="${id}" data-sf="${x.k}" value="${v??''}" ${x.min!=null?`min="${x.min}"`:''} ${x.max!=null?`max="${x.max}"`:''} step="${x.max<=1?'0.05':'1'}"></div>`;
+  if(x.t==='chk')return `<label class="chk"><input type="checkbox" id="${id}" data-sf="${x.k}" ${v?'checked':''}>${x.l}</label>`;
+  if(x.t==='area')return `<div class="fld" style="grid-column:1/-1"><label for="${id}">${x.l}</label><textarea id="${id}" data-sf="${x.k}" rows="4" placeholder="${esc(x.ph)}">${esc(v??'')}</textarea></div>`;
+  return `<div class="fld"><label for="${id}">${x.l}</label><input id="${id}" data-sf="${x.k}" value="${esc(v??'')}" placeholder="${esc(x.ph||'')}"></div>`}
+function vStudio(){
+  let m=curModel();if(m.cat!==UI.cat){m=MODELS.find(x=>x.cat===UI.cat);UI.model=m.id}
+  const f=formOf(m),mq=UI.mq.toLowerCase();
+  const ms=MODELS.filter(x=>x.cat===UI.cat&&(!mq||(x.name+' '+x.prov+' '+x.desc).toLowerCase().includes(mq)));
+  const groups={};ms.forEach(x=>(groups[x.prov]=groups[x.prov]||[]).push(x));
+  const mode=api.mode(),ep=S.settings.endpoints[m.id]||'';
+  const pl=promptLabel(m);
+  const sfxNote=UI.cat==='sfx'?`<div class="card pad mt"><h3>${ic('info')}Sound effects inside your clips</h3><div class="sm muted">Mirelo is Higgsfield’s only dedicated SFX model, and it’s for the game pipeline only. For normal videos, these models generate native audio (sound effects included) with the clip:</div><div class="chips mt12">${NATIVE_AUDIO.map(id=>{const x=MODELS.find(y=>y.id===id);return `<button class="chipbtn" data-a="pickModel" data-id="${id}">${esc(x.name)}</button>`}).join('')}</div></div>`:'';
+  return `<div class="tabs">${CATS.map(c=>`<button class="tab ${UI.cat===c.id?'on':''}" data-a="cat" data-v="${c.id}">${ic(c.i)}${c.n}<span class="n">${MODELS.filter(x=>x.cat===c.id).length}</span></button>`).join('')}</div>
+  <div class="studio">
+   <div class="card pad"><input id="mq" data-f="mq" value="${esc(UI.mq)}" placeholder="Search ${catOf(UI.cat).n.toLowerCase()} models">
+    <div class="mlist">${Object.entries(groups).map(([g,xs])=>`<div class="mgrp">${esc(g)}</div>${xs.map(x=>`<div class="mitem ${x.id===m.id?'on':''}" data-a="pickModel" data-id="${x.id}"><div class="n">${esc(x.name)}${x.game?'<span class="pill warn" style="font-size:10px">Game only</span>':''}${S.settings.endpoints[x.id]?`<span title="API endpoint saved" style="color:var(--ok);margin-left:auto">${ic('link')}</span>`:''}</div><div class="d">${esc(x.desc)}</div></div>`).join('')}`).join('')||'<div class="sm faint" style="padding:10px">No models match.</div>'}</div></div>
+   <div>
+    <div class="card pad">
+     <div class="row wrap" style="margin-bottom:14px"><div class="jico">${ic(catOf(m.cat).i)}</div><div class="flex1"><div class="b" style="font-size:16px">${esc(m.name)}</div><div class="sm muted">${esc(m.prov)} · ${esc(m.desc)}</div></div>${m.game?'<span class="pill warn">Higgsfield game pipeline only</span>':''}</div>
+     ${pl?`<div class="fld"><label for="sf-prompt" class="row between"><span>${pl}</span><span class="xs faint" id="pc">${(f.prompt||'').length} chars</span></label><textarea id="sf-prompt" data-sf="prompt" rows="${Math.min(22,Math.max(m.cat==='voice'?5:4,String(f.prompt||'').split('\n').length+1))}" placeholder="${guideOf(m)?esc(guideOf(m).ph):m.cat==='voice'?'What should the voice say?':m.cat==='music'?'e.g. Moody R&B, slow tempo, warm female vocals, late-night city vibe':m.cat==='sfx'?'e.g. Heavy door slam in an empty hallway':'Describe the shot: subject, action, camera, lighting, style…'}">${esc(f.prompt||'')}</textarea></div>
+      <div class="row wrap mt8" style="gap:6px"><span class="xs faint">Insert:</span><button class="chipbtn" data-a="insertHook">Saved hook</button><button class="chipbtn" data-a="insertIdea">From idea</button>${m.cat==='video'?['slow push-in','handheld','golden hour','35mm film grain','cinematic lighting'].map(x=>`<button class="chipbtn" data-a="addTerm" data-v="${x}">+ ${x}</button>`).join(''):m.cat==='image'?['photorealistic','editorial lighting','shallow depth of field','8k detail'].map(x=>`<button class="chipbtn" data-a="addTerm" data-v="${x}">+ ${x}</button>`).join(''):''}</div>`:''}
+     ${guideOf(m)?`<div id="guide">${guideHTML(m,f)}</div>`:''}
+     ${m.fields.length?`<div class="fgrid mt12">${m.fields.map(x=>fieldHTML(x,f[x.k])).join('')}</div>`:''}
+     ${m.refs.length?`<div class="grid g2 mt12">${m.refs.map(r=>`<div class="fld"><label for="sf-ref-${r}">${ROLE[r]||r}${ARR(r)?' <span class="faint">(one per line)</span>':''}</label><textarea id="sf-ref-${r}" data-sf="ref:${r}" rows="2" style="min-height:44px" placeholder="https://…">${esc(f['ref:'+r]||'')}</textarea></div>`).join('')}</div>`:''}
+     <div class="grid g2 mt12"><div class="fld"><label for="sf-endpoint">API endpoint</label><input id="sf-endpoint" data-ep value="${esc(ep)}" placeholder="vendor/model/version"><span class="hint">Copy it from this model’s API page at <a href="https://console.higgsfield.ai" target="_blank" rel="noopener">console.higgsfield.ai</a>. Saved per model.</span></div>
+      <div class="fld"><label for="sf-__idea">Link result to idea</label><select id="sf-__idea" data-sf="__idea">${ideaOpts(f.__idea)}</select></div></div>
+     <details class="mt12"><summary>Advanced: extra parameters and request preview</summary>
+      <div class="grid g2 mt8"><div class="fld"><label for="sf-__extra">Extra JSON (merged into the request)</label><textarea id="sf-__extra" data-sf="__extra" rows="6" placeholder='{"seed": 42}' style="font-family:ui-monospace,Consolas,monospace;font-size:12px">${esc(f.__extra||'')}</textarea><span class="hint" id="st-err" style="color:var(--bad)"></span><span class="hint">Field names follow Higgsfield’s model catalog. If a model’s API page names a field differently, set it here.</span></div>
+      <div class="fld"><label>Request <span class="faint" id="ep-full"></span></label><pre class="code" id="st-preview"></pre></div></div></details>
+     <div class="row wrap mt" style="gap:8px"><button class="btn pri" data-a="generate">${ic('sparkles')}Generate</button><button class="btn" data-a="draft" title="Save this prompt to your queue without running it">${ic('plus')}Save as draft</button><button class="btn" data-a="copyCurl">${ic('copy')}Copy cURL</button><button class="btn" data-a="copyPrompt">${ic('copy')}Copy prompt</button><a class="btn ghost" href="https://higgsfield.ai" target="_blank" rel="noopener">${ic('ext')}Open Higgsfield</a></div>
+     ${mode==='off'?`<div class="note mt12">${ic('info')}<div><b>Copy & paste mode.</b> The browser version can’t safely hold your API secret. To generate right here, use the Gen Artz Windows app or add a proxy in Settings. For now, save drafts, copy the prompt into Higgsfield, then add results to your Library by URL.</div></div>`:mode==='nokey'?`<div class="note warn mt12">${ic('key')}<div>Add your Higgsfield API key in <a href="#prefs">Settings</a> to generate.</div></div>`:''}
+    </div>
+    ${sfxNote}
+    <div class="card pad mt"><h3>${ic('clock')}Generation queue <span class="pill" id="jobcount">${S.jobs.length}</span>${S.jobs.some(j=>TERMINAL.includes(j.status))?`<button class="btn sm ghost r" data-a="clearJobs">Clear finished</button>`:''}</h3><div id="jobs">${jobsHTML()}</div></div>
+   </div></div>`;
+}
+function buildBody(m,f){const b={};let err='';
+  if(!m.np&&f.prompt&&f.prompt.trim()){if(m.dialogue)b.dialogue=[{text:f.prompt.trim(),voice_type:f.voice_type||'preset',voice_id:f.voice_id||''}];else b.prompt=f.prompt.trim()}
+  m.fields.forEach(x=>{if(m.dialogue&&(x.k==='voice_type'||x.k==='voice_id'))return;const v=f[x.k];if(v===''||v===undefined||v===null||(typeof v==='number'&&isNaN(v)))return;b[x.k]=v});
+  m.refs.forEach(r=>{const u=String(f['ref:'+r]||'').split(/[\s,]+/).filter(s=>/^https?:\/\//.test(s));if(u.length)b[r]=ARR(r)?u:u[0]});
+  if(f.__extra&&f.__extra.trim()){try{const x=JSON.parse(f.__extra);if(x&&typeof x==='object')Object.assign(b,x)}catch(e){err='Extra JSON isn’t valid: '+e.message}}
+  return{body:b,err}}
+function updatePreview(){const el=$('#st-preview');if(!el)return;const m=curModel(),{body,err}=buildBody(m,formOf(m));el.textContent=JSON.stringify(body,null,2);const e=$('#st-err');if(e)e.textContent=err;const ep=$('#ep-full');if(ep)ep.textContent='POST /'+(S.settings.endpoints[m.id]||'<endpoint>')}
+function sfInput(t){const m=curModel(),f=formOf(m),k=t.dataset.sf;let v;
+  if(t.type==='checkbox')v=t.checked;else if(t.type==='number')v=t.value===''?'':Number(t.value);
+  else if(t.tagName==='SELECT'){const fd=m.fields.find(x=>x.k===k);v=fd?fd.o.find(o=>String(o)===t.value):t.value;if(v===undefined)v=t.value}else v=t.value;
+  f[k]=v;updatePreview();if(guideOf(m)&&(k==='mode'||k==='extension_mode'||k==='duration'||k.startsWith('ref:')||k==='generate_audio'||k==='sound')){const gd=$('#guide');if(gd)gd.innerHTML=guideHTML(m,f)}if(k==='prompt'){UI._okPh=0;const c=$('#pc');if(c)c.textContent=String(v).length+' chars'}}
+const cleanPath=p=>String(p||'').trim().replace(/^https?:\/\/api\.higgsfield\.ai\/?/,'').replace(/^\/+/,'');
+function jobPill(j){const s=j.status;if(s==='completed')return '<span class="pill ok">Done</span>';if(s==='draft')return '<span class="pill">Draft</span>';if(['failed','nsfw'].includes(s))return `<span class="pill bad">${s==='nsfw'?'Blocked':'Failed'}</span>`;if(s==='canceled'||s==='cancelled')return '<span class="pill">Canceled</span>';return `<span class="pill warn"><span class="spin"></span>${s==='submitting'?'Sending':s==='queued'?'Queued':'Generating'}</span>`}
+const mediaType=(u,cat)=>/\.(png|jpe?g|webp|gif|svg|avif)(\?|$)/i.test(u)?'image':/\.(mp4|mov|webm|m4v)(\?|$)/i.test(u)?'video':/\.(mp3|wav|ogg|m4a|aac|flac|opus)(\?|$)/i.test(u)?'audio':(['video','vtool'].includes(cat)?'video':['voice','music','sfx'].includes(cat)?'audio':'image');
+const mediaEl=(a,ctl)=>a.type==='video'?`<video src="${esc(a.url)}" ${ctl?'controls':'muted loop'} preload="metadata" playsinline></video>`:a.type==='audio'?`<audio src="${esc(a.url)}" controls preload="none"></audio>`:`<img src="${esc(a.url)}" alt="" loading="lazy">`;
+function jobsHTML(){if(!S.jobs.length)return empty('sparkles','No generations yet','Pick a model, write a prompt and hit Generate.');
+  return S.jobs.slice(0,40).map(j=>`<div class="job"><div class="jico">${ic(catOf(j.cat).i)}</div><div style="min-width:0"><div class="row wrap"><b>${esc(j.name)}</b>${jobPill(j)}<span class="xs faint">${ago(j.createdAt)}</span>${j.ideaId?`<span class="xs muted row" style="gap:4px">${ic('link')}${esc(ideaName(j.ideaId))}</span>`:''}</div><div class="sm muted clamp2 mt8">${esc(j.prompt||'(no prompt)')}</div>${j.error?`<div class="sm" style="color:var(--bad);margin-top:6px">${esc(j.error)}</div>`:''}${j.outputs&&j.outputs.length?`<div class="thumbs">${j.outputs.map(u=>{const a={url:u,type:mediaType(u,j.cat)};return `<a href="${esc(u)}" target="_blank" rel="noopener" title="Open">${mediaEl(a,a.type==='audio')}</a>`}).join('')}</div>`:''}</div>
+   <div class="row" style="align-items:flex-start">${j.status==='draft'?`<button class="ib sm" data-a="loadJob" data-id="${j.id}" title="Load into form">${ic('edit')}</button>`:''}${['queued','in_progress'].includes(j.status)?`<button class="ib sm" data-a="cancelJob" data-id="${j.id}" title="Cancel">${ic('stop')}</button>`:''}${['failed','nsfw','canceled'].includes(j.status)?`<button class="ib sm" data-a="loadJob" data-id="${j.id}" title="Edit & retry">${ic('refresh')}</button>`:''}<button class="ib sm" data-a="copyJob" data-id="${j.id}" title="Copy prompt">${ic('copy')}</button><button class="ib sm" data-a="delJob" data-id="${j.id}" title="Remove">${ic('trash')}</button></div></div>`).join('')}
+function refreshJobs(){const el=$('#jobs');if(el)el.innerHTML=jobsHTML();const c=$('#jobcount');if(c)c.textContent=S.jobs.length;renderSide()}
+async function generate(){
+  const m=curModel(),f=formOf(m),{body,err}=buildBody(m,f);if(err)return toast(err,'bad');
+  if(!m.np&&!m.po&&!(f.prompt||'').trim())return toast('Write a prompt first');
+  if(m.np&&!m.refs.some(r=>(f['ref:'+r]||'').trim()))return toast('Add the input media URL first');
+  const miss=missing(m,f);if(miss.length)return toast(m.name+' needs '+miss.map(x=>x[1]).join(' and ')+(f.mode?' in '+f.mode+' mode':''),'bad');
+  if(/«[^»]*»/.test(f.prompt||'')&&!UI._okPh){UI._okPh=1;return toast('Your prompt still has «…» placeholders. Fill them in, or press Generate again to send as is.')}UI._okPh=0;
+  const mode=api.mode();if(mode==='off'||mode==='nokey')return connectModal();
+  const path=cleanPath(S.settings.endpoints[m.id]);if(!path){toast('Add this model’s API endpoint first');$('#sf-endpoint')?.focus();return}
+  const j={id:uid(),model:m.id,name:m.name,cat:m.cat,prompt:f.prompt||'',body,path,status:'submitting',outputs:[],ideaId:f.__idea||'',createdAt:Date.now(),form:{...f}};
+  S.jobs.unshift(j);save();refreshJobs();
+  try{const r=await api.submit(path,body,uid());j.requestId=r.request_id;j.statusUrl=r.status_url;j.cancelUrl=r.cancel_url;applyStatus(j,{...r,status:r.status||'queued'});toast('Sent to '+m.name)}
+  catch(e){j.status='failed';j.error=e.message}
+  save();refreshJobs();
+}
+function saveDraft(){const m=curModel(),f=formOf(m),{body}=buildBody(m,f);if(!(f.prompt||'').trim()&&!m.np)return toast('Write a prompt first');
+  S.jobs.unshift({id:uid(),model:m.id,name:m.name,cat:m.cat,prompt:f.prompt||'',body,path:cleanPath(S.settings.endpoints[m.id]),status:'draft',outputs:[],ideaId:f.__idea||'',createdAt:Date.now(),form:{...f}});save();refreshJobs();toast('Draft saved to queue')}
+function curl(){const m=curModel(),{body}=buildBody(m,formOf(m)),p=cleanPath(S.settings.endpoints[m.id])||'<model-endpoint-from-console>';
+  return `curl -X POST "https://api.higgsfield.ai/${p}" \\\n  -H "Authorization: Key $HF_API_KEY_ID:$HF_API_KEY_SECRET" \\\n  -H "Content-Type: application/json" \\\n  -H "Idempotency-Key: $(uuidgen)" \\\n  -d '${JSON.stringify(body).replace(/'/g,"'\\''")}'`}
+function applyStatus(j,r){const prev=j.status;j.status=String(r.status||j.status).toLowerCase();j.lastCheck=Date.now();
+  if(j.status==='completed'&&prev!=='completed'){j.outputs=extractUrls(r);j.outputs.forEach(u=>S.assets.unshift({id:uid(),url:u,type:mediaType(u,j.cat),title:(j.prompt||j.name).slice(0,90),model:j.name,ideaId:j.ideaId||'',jobId:j.id,createdAt:Date.now()}));act('gen');notify('Generation ready',j.name);toast(j.name+' finished ✓');if(!j.outputs.length)j.error='Finished, but no media URL was found in the response.'}
+  if(['failed','nsfw'].includes(j.status)&&!j.error)j.error=r.error||r.detail||r.message||(j.status==='nsfw'?'Blocked by the content filter.':'Generation failed.')}
+function extractUrls(o){const out=[];const skip=['status_url','cancel_url','webhook_url'];
+  (function walk(v,k){if(!v)return;if(typeof v==='string'){if(/^https?:\/\//.test(v)&&!skip.includes(k)&&!/\/requests\//.test(v))out.push(v)}else if(Array.isArray(v))v.forEach(x=>walk(x,k));else if(typeof v==='object')for(const kk in v){if(kk==='input'||kk==='params'||kk==='arguments')continue;walk(v[kk],kk)}})(o);return[...new Set(out)]}
+let polling=false;
+async function pollJobs(){if(polling)return;const m=api.mode();if(m!=='desktop'&&m!=='proxy')return;
+  const act_=S.jobs.filter(j=>j.requestId&&!TERMINAL.includes(j.status));if(!act_.length)return;polling=true;
+  for(const j of act_){try{applyStatus(j,await api.status(j))}catch(e){j.lastErr=e.message}}
+  polling=false;save();if(UI.route==='studio')refreshJobs();else if(['dashboard','library'].includes(UI.route)&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))render();else renderSide()}
+setInterval(pollJobs,5000);
+function connectModal(){const desk=DESK;openModal('Connect to Higgsfield',desk?`<div class="muted">Add your Higgsfield API key ID and secret in Settings. The Windows app encrypts the key on this PC and sends requests straight to api.higgsfield.ai.</div>`:
+  `<div class="muted">Higgsfield’s API needs your key ID and secret, and their docs say not to put the secret in browser code. To generate from Gen Artz:</div>
+   <div class="note">${ic('check')}<div><b>Use the Windows app</b> (recommended). It encrypts your key on this PC and generates directly.</div></div>
+   <div class="note">${ic('link')}<div><b>Or set a proxy URL</b> in Settings. That’s a small server you control that adds your key and forwards to api.higgsfield.ai.</div></div>
+   <div class="note">${ic('copy')}<div><b>Or copy and paste.</b> Copy the prompt or a ready cURL command, generate in Higgsfield, then add the result to your Library by URL.</div></div>`,
+  `<button class="btn" data-a="copyCurl">${ic('copy')}Copy cURL</button><button class="btn" data-a="copyPrompt">${ic('copy')}Copy prompt</button><button class="btn pri" data-a="goSettings">${ic('gear')}Open Settings</button>`)}
+function pickFromModal(kind){
+  if(kind==='hook'){if(!S.hooks.length)return toast('No saved hooks yet');openModal('Insert a saved hook',S.hooks.map(h=>`<div class="sug" style="cursor:pointer" data-a="insText" data-v="${esc(h.text)}">${scoreTag(h.text)}<div class="flex1 sm">${esc(h.text)}</div></div>`).join(''))}
+  else{if(!S.ideas.length)return toast('No ideas yet');openModal('Use an idea',S.ideas.map(i=>`<div class="sug" style="cursor:pointer" data-a="insIdea" data-id="${i.id}"><div class="flex1"><div class="b sm">${esc(i.title)}</div><div class="xs muted clamp2">${esc(i.notes)}</div></div></div>`).join(''))}}
+function setPrompt(t,append){const m=curModel(),f=formOf(m);f.prompt=append&&f.prompt?f.prompt.replace(/[\s.,]*$/,'')+(append===','?', ':'. ')+t:t;render()}
+
+/* ---------- VIEW: library ---------- */
+function vLib(){
+  const q=UI.libQ.toLowerCase();const list=S.assets.filter(a=>(UI.libF==='all'||a.type===UI.libF)&&(!q||(a.title+' '+(a.model||'')+' '+ideaName(a.ideaId)).toLowerCase().includes(q)));
+  const n=t=>S.assets.filter(a=>a.type===t).length;
+  return `<div class="toolbar"><div class="seg">${[['all','All',S.assets.length],['image','Images',n('image')],['video','Videos',n('video')],['audio','Audio',n('audio')]].map(([k,l,c])=>`<button class="${UI.libF===k?'on':''}" data-a="libF" data-v="${k}">${l} <span class="faint">${c}</span></button>`).join('')}</div><input class="q" id="lib-q" data-f="libQ" value="${esc(UI.libQ)}" placeholder="Filter by prompt, model or idea"><span class="xs faint" style="margin-left:auto">Results stay hosted by the provider. Download anything you want to keep.</span></div>
+  ${list.length?`<div class="lib">${list.map(a=>`<div class="card asset"><a class="media" href="${esc(a.url)}" target="_blank" rel="noopener">${mediaEl(a,a.type!=='image')}</a><div class="body"><div class="sm b clamp2">${esc(a.title||'Untitled')}</div><div class="xs muted mt8 row wrap" style="gap:8px">${a.model?`<span>${esc(a.model)}</span>`:''}<span>${ago(a.createdAt)}</span>${a.ideaId?`<span class="row" style="gap:3px">${ic('link')}${esc(ideaName(a.ideaId))}</span>`:''}</div><div class="row mt8" style="gap:2px"><a class="ib sm" href="${esc(a.url)}" target="_blank" rel="noopener" download title="Open / download">${ic('download')}</a><button class="ib sm" data-a="copyUrl" data-id="${a.id}" title="Copy URL">${ic('copy')}</button><button class="ib sm" data-a="editAsset" data-id="${a.id}" title="Edit">${ic('edit')}</button><button class="ib sm" data-a="delAsset" data-id="${a.id}" title="Remove" style="margin-left:auto">${ic('trash')}</button></div></div></div>`).join('')}</div>`
+  :`<div class="card">${empty('image',S.assets.length?'Nothing matches':'Your library is empty','Finished generations land here. You can also add media you made elsewhere.',`<button class="btn" data-a="addAsset">${ic('plus')}Add by URL</button> <button class="btn pri" data-a="go" data-r="studio">${ic('sparkles')}Open Studio</button>`)}</div>`}`;
+}
+function assetModal(id){const a=id?S.assets.find(x=>x.id===id):{url:'',title:'',type:'image',ideaId:''};if(!a)return;
+  openModal(id?'Edit item':'Add to library',`${id?'':`<div class="fld"><label>Media URL</label><input id="a-url" placeholder="https://…/result.mp4"></div>`}<div class="fld"><label>Title</label><input id="a-title" value="${esc(a.title)}" placeholder="What is it?"></div><div class="grid g2"><div class="fld"><label>Type</label><select id="a-type">${['image','video','audio'].map(t=>`<option ${a.type===t?'selected':''}>${t}</option>`).join('')}</select></div><div class="fld"><label>Linked idea</label><select id="a-idea">${ideaOpts(a.ideaId)}</select></div></div>`,
+  `<button class="btn" data-a="closeModal">Cancel</button><button class="btn pri" data-a="saveAsset" data-id="${id||''}">${ic('check')}Save</button>`)}
+
+/* ---------- VIEW: progress ---------- */
+function vProg(){
+  const goal=+S.settings.weeklyGoal||5,ws=weekStart(),st=streaks();
+  const weeks=[];for(let i=7;i>=0;i--){const s=addDays(ws,-7*i),e=addDays(s,6);weeks.push({s,n:S.posts.filter(p=>p.status==='posted'&&p.date>=ymd(s)&&p.date<=ymd(e)).length,cur:i===0})}
+  const maxW=Math.max(goal,...weeks.map(w=>w.n),1);const doneWk=weeks[7].n;
+  const days=new Map();S.log.forEach(l=>days.set(l.d,(days.get(l.d)||0)+1));
+  const hs=addDays(ws,-77);const heat=[];for(let i=0;i<84;i++){const d=addDays(hs,i);const v=days.get(ymd(d))||0;heat.push(`<i class="${v>=4?'h3':v>=2?'h2':v>=1?'h1':''}" title="${fmtDate(ymd(d))}: ${v} action${v===1?'':'s'}"></i>`)}
+  const totalPosted=S.posts.filter(p=>p.status==='posted').length;
+  const byPlat=Object.entries(PLATFORMS).map(([k,p])=>[p,S.posts.filter(x=>x.status==='posted'&&x.platform===k).length]);const mp=Math.max(1,...byPlat.map(x=>x[1]));
+  const gens=S.jobs.filter(j=>j.status==='completed').length;
+  return `<div class="grid g4">
+   <div class="card stat"><div class="lbl"><span>${ic('flame')}</span>Current streak</div><div class="val">${st.cur} days</div><div class="sub">Best: ${st.best} days</div></div>
+   <div class="card stat"><div class="lbl"><span>${ic('check')}</span>Total posted</div><div class="val">${totalPosted}</div><div class="sub">All time</div></div>
+   <div class="card stat"><div class="lbl"><span>${ic('zap')}</span>Hooks written</div><div class="val">${S.hooks.length}</div><div class="sub">${S.hooks.filter(h=>hookScore(h.text).s>=75).length} scored 75+</div></div>
+   <div class="card stat"><div class="lbl"><span>${ic('sparkles')}</span>Generations</div><div class="val">${gens}</div><div class="sub">${S.assets.length} items in library</div></div></div>
+  <div class="grid g21 mt">
+   <div class="card pad"><h3>${ic('trend')}Posts per week<span class="xs faint r">Goal line: ${goal}</span></h3><div class="bars" style="position:relative"><div style="position:absolute;left:0;right:0;bottom:${Math.round(22+goal/maxW*120)}px;border-top:1.5px dashed var(--faint);opacity:.7"></div>${weeks.map(w=>`<div class="b"><em>${w.n}</em><i class="${w.cur?'cur':''}" style="height:${Math.max(3,Math.round(w.n/maxW*120))}px"></i><span>${w.cur?'This wk':w.s.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</span></div>`).join('')}</div></div>
+   <div class="card pad"><h3>${ic('target')}Weekly goal</h3><div class="ringwrap">${ring(Math.round(doneWk/goal*100),doneWk+'/'+goal,'this week')}<div class="flex1"><div class="fld"><label for="goal-in">Posts per week</label><input type="number" id="goal-in" min="1" max="50" data-set="weeklyGoal" value="${goal}"></div><div class="xs faint mt8">Week starts Monday.</div></div></div></div></div>
+  <div class="grid g3 mt">
+   <div class="card pad"><h3>${ic('cal')}Activity (12 weeks)</h3><div class="heat">${heat.join('')}</div><div class="row xs faint mt12">Less<span class="heat" style="grid-template-rows:13px;display:inline-grid"><i></i><i class="h1"></i><i class="h2"></i><i class="h3"></i></span>More</div><div class="xs faint mt8">Counts ideas, hooks, scheduling, posting and generations.</div></div>
+   <div class="card pad"><h3>${ic('board')}Idea pipeline</h3>${STAT.map(s=>{const n=S.ideas.filter(i=>i.status===s).length;return `<div class="hrow"><span class="l">${s}</span><div class="bar" style="--c:${STATC[s]}"><i style="width:${n/Math.max(1,S.ideas.length)*100}%"></i></div><span class="v">${n}</span></div>`}).join('')}</div>
+   <div class="card pad"><h3>${ic('send')}Posted by platform</h3>${byPlat.map(([p,n])=>`<div class="hrow"><span class="l">${p.n}</span><div class="bar" style="--c:${p.c}"><i style="width:${n/mp*100}%"></i></div><span class="v">${n}</span></div>`).join('')}</div></div>`;
+}
+
+/* ---------- VIEW: settings ---------- */
+function vSet(){
+  const mode=api.mode();const eps=Object.entries(S.settings.endpoints).filter(([,v])=>v);
+  return `<div class="card pad" style="max-width:980px">
+   <div class="set"><div><h4>Profile</h4><p>Used in your dashboard greeting.</p></div><div class="fld" style="max-width:320px"><label for="set-name">Display name</label><input id="set-name" data-set="name" value="${esc(S.settings.name)}" placeholder="Your name"></div></div>
+   <div class="set"><div><h4>Appearance</h4><p>Dark mode follows Windows when set to System.</p></div><div class="seg">${[['light','Light','sun'],['dark','Dark','moon'],['system','System','gear']].map(([k,l,i])=>`<button class="${S.settings.theme===k?'on':''}" data-a="setTheme" data-v="${k}">${ic(i)}${l}</button>`).join('')}</div></div>
+   <div class="set"><div><h4>Higgsfield connection</h4><p>${DESK?'The Windows app sends requests from this PC. Your key is encrypted with Windows data protection and never stored in the page.':'This is the browser version. The API secret can’t safely live in a web page.'}</p></div><div>
+     <div class="row" style="margin-bottom:12px"><span class="dot ${connLabel()[0]}"></span><b>${connLabel()[1]}</b><span class="sm faint">· ${connLabel()[2]}</span></div>
+     ${DESK?`<div class="grid g2"><div class="fld"><label for="k-id">API key ID</label><input id="k-id" autocomplete="off" placeholder="${UI.hasKey?'Saved. Enter a new one to replace it.':'Key ID'}"></div><div class="fld"><label for="k-sec">API key secret</label><input id="k-sec" type="password" autocomplete="off" placeholder="${UI.hasKey?'••••••••':'Secret'}"></div></div>
+       <div class="row mt12"><button class="btn pri" data-a="saveKey">${ic('key')}Save key</button>${UI.hasKey?`<button class="btn" data-a="testKey">${ic('check')}Test connection</button><button class="btn danger" data-a="removeKey">Remove key</button>`:''}<a class="btn ghost" href="https://console.higgsfield.ai" target="_blank" rel="noopener">${ic('ext')}Get an API key</a></div>`
+     :`<div class="fld"><label for="set-proxy">Proxy URL (optional)</label><input id="set-proxy" data-set="proxyUrl" value="${esc(S.settings.proxyUrl)}" placeholder="https://your-proxy.example.com"><span class="hint">A server you control that adds <code>Authorization: Key ID:SECRET</code> and forwards to https://api.higgsfield.ai. Gen Artz calls <code>{proxy}/{model-endpoint}</code> and <code>{proxy}/requests/{id}/status</code>.</span></div>
+       <div class="note mt12">${ic('info')}<div>Without a proxy, Studio runs in copy & paste mode: save drafts, copy prompts or cURL, then add results to the Library by URL. For one-click generation, use the Windows app.</div></div>`}
+     <div class="xs faint mt12">The Higgsfield API is billed from your API balance at console.higgsfield.ai, separately from your higgsfield.ai plan credits.</div>
+   </div></div>
+   <div class="set"><div><h4>Model endpoints</h4><p>Each model’s API path comes from its page in the Higgsfield console. You can set them in Studio too.</p></div><div>${eps.length?`<table class="tbl"><tbody>${eps.map(([k,v])=>{const m=MODELS.find(x=>x.id===k);return `<tr><td class="b sm">${esc(m?m.name:k)}</td><td><code class="sm">${esc(v)}</code></td><td style="text-align:right"><button class="ib sm" data-a="pickModel" data-id="${k}" title="Open in Studio">${ic('sparkles')}</button><button class="ib sm" data-a="delEp" data-id="${k}" title="Clear">${ic('trash')}</button></td></tr>`}).join('')}</tbody></table>`:'<div class="sm faint">None saved yet.</div>'}</div></div>
+   <div class="set"><div><h4>Reminders</h4><p>Get a notification when a scheduled post is due (while Gen Artz is open).</p></div><div class="row"><label class="chk" style="padding:0"><input type="checkbox" data-set="remind" ${S.settings.remind?'checked':''}>Remind me when it’s time to post</label>${!DESK&&'Notification'in window&&Notification.permission!=='granted'?`<button class="btn sm" data-a="askNotif">Allow notifications</button>`:''}</div></div>
+   <div class="set"><div><h4>Your data</h4><p>Everything is saved on this device. Export a backup to move it to another PC or browser.</p></div><div class="row wrap"><button class="btn" data-a="export">${ic('download')}Export backup</button><label class="btn">${ic('upload')}Import backup<input type="file" id="imp-file" accept=".json,application/json" hidden></label><button class="btn" data-a="pasteBackup">Paste backup</button>${S.ideas.some(x=>x.sample)||S.posts.some(x=>x.sample)||S.hooks.some(x=>x.sample)?`<button class="btn" data-a="clearSample">Remove sample data</button>`:''}<button class="btn danger" data-a="reset">${ic('trash')}Erase everything</button></div></div>
+   <div class="set"><div><h4>About</h4><p>Gen Artz 1.0</p></div><div class="sm muted">Plan content, write hooks, schedule posts and generate media with Higgsfield models.<br>Shortcuts: <kbd>Ctrl K</kbd> search · <kbd>Ctrl N</kbd> new idea · <kbd>Esc</kbd> close.</div></div>
+  </div>`;
+}
+
+/* ---------- command palette ---------- */
+let palSel=0,palList=[];
+function openPal(){$('#palette').innerHTML=`<div class="pal" data-a="palClose"><div class="pbox"><div class="pin">${ic('search')}<input id="pal-q" placeholder="Search ideas, hooks, posts, models, pages…" autocomplete="off"><kbd>Esc</kbd></div><div class="pres" id="pal-res"></div></div></div>`;palSel=0;$('#pal-q').focus();palRender()}
+const closePal=()=>{$('#palette').innerHTML=''};
+function palItems(q){q=q.toLowerCase().trim();const it=[];
+  Object.entries(ROUTES).forEach(([k,[n,i]])=>it.push({g:'Pages',l:n,i,run:()=>go(k)}));
+  [['New idea','bulb',()=>ideaModal()],['Schedule a post','cal',()=>postModal()],['Write a hook','zap',()=>go('hooks')],['Toggle dark mode','moon',toggleTheme],['Export backup','download',exportData]].forEach(([l,i,run])=>it.push({g:'Actions',l,i,run}));
+  S.ideas.forEach(x=>it.push({g:'Ideas',l:x.title,s:x.status,i:'bulb',t:x.notes+' '+x.tags.join(' '),run:()=>{go('ideas');ideaModal(x.id)}}));
+  S.hooks.forEach(h=>it.push({g:'Hooks',l:h.text,s:'Score '+hookScore(h.text).s,i:'zap',run:()=>{UI.hookQ=h.text.slice(0,40);go('hooks')}}));
+  S.posts.forEach(p=>it.push({g:'Posts',l:p.title,s:fmtDate(p.date)+' · '+plat(p.platform).n,i:'cal',t:p.notes,run:()=>{const d=parseYmd(p.date);UI.cal={y:d.getFullYear(),m:d.getMonth()};go('calendar');postModal(p.id)}}));
+  MODELS.forEach(m=>it.push({g:'Models',l:m.name,s:m.prov+' · '+catOf(m.cat).n,i:catOf(m.cat).i,t:m.desc,run:()=>{UI.cat=m.cat;UI.model=m.id;go('studio')}}));
+  S.assets.forEach(a=>it.push({g:'Library',l:a.title||'Untitled',s:a.type,i:'image',t:a.model,run:()=>{UI.libQ=(a.title||'').slice(0,30);go('library')}}));
+  if(!q)return it.filter(x=>x.g==='Pages'||x.g==='Actions');
+  const words=q.split(/\s+/);return it.filter(x=>{const h=(x.l+' '+(x.s||'')+' '+(x.t||'')+' '+x.g).toLowerCase();return words.every(w=>h.includes(w))}).slice(0,50)}
+function palRender(){const q=$('#pal-q')?.value||'';palList=palItems(q);palSel=Math.min(palSel,Math.max(0,palList.length-1));let g='',h='';
+  palList.forEach((x,i)=>{if(x.g!==g){g=x.g;h+=`<div class="pgrp">${g}</div>`}h+=`<div class="pit ${i===palSel?'on':''}" data-a="palRun" data-i="${i}">${ic(x.i)}<span class="ellip">${esc(x.l)}</span>${x.s?`<span class="s">${esc(x.s)}</span>`:''}</div>`});
+  $('#pal-res').innerHTML=h||`<div class="empty sm">No results for “${esc(q)}”</div>`;$('.pit.on')?.scrollIntoView({block:'nearest'})}
+
+/* ---------- data import/export ---------- */
+const backupJSON=()=>JSON.stringify({app:'Gen Artz',version:1,exportedAt:new Date().toISOString(),data:S},null,2);
+function exportData(){openModal('Export backup',`<div class="muted sm">Save a copy of all your ideas, hooks, posts, queue and settings. Your API key is never included.</div><div class="note">${ic('info')}<div>If the download doesn’t start (some previews block downloads), use <b>Copy backup</b> and paste it into a .json file. You can also paste it into Import on another device.</div></div>`,
+  `<button class="btn" data-a="copyBackup">${ic('copy')}Copy backup</button><button class="btn pri" data-a="downloadBackup">${ic('download')}Download .json</button>`)}
+function downloadBackup(){const blob=new Blob([backupJSON()],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`genartz-backup-${today()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Backup downloaded')}
+function importText(txt){try{const j=JSON.parse(txt);const d=j.data||j;if(!Array.isArray(d.ideas))throw new Error('bad');
+  confirmBox('Replace your data?',`This backup has ${d.ideas.length} ideas, ${(d.hooks||[]).length} hooks and ${(d.posts||[]).length} posts. It will replace what’s on this device.`,'Replace',()=>{S=Object.assign(defaults(),d);S.settings=Object.assign(defaults().settings,d.settings||{});S.settings.endpoints=Object.assign({...DEFAULT_ENDPOINTS},S.settings.endpoints||{});save();applyTheme();render();toast('Backup imported')})}catch(e){toast('That isn’t a Gen Artz backup','bad')}}
+function importFile(file){if(!file)return;const r=new FileReader();r.onload=()=>importText(r.result);r.readAsText(file)}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id;
+  if((a==='ovClose'||a==='palClose')&&e.target!==el)return;
+  if(el.tagName==='A'&&el.getAttribute('href'))return;
+  switch(a){
+   case 'go':go(el.dataset.r);break;
+   case 'goSettings':closeModal();go('settings');break;
+   case 'quick':{const q=el.dataset.q;if(q.startsWith('go:'))go(q.slice(3));else if(q==='newIdea')ideaModal();else if(q==='newPost')postModal();else if(q==='generate')generate();else if(q==='addAsset')assetModal();else if(q==='export')exportData();else if(q==='focusHook'){$('#hk-text')?.focus()}break}
+   case 'theme':toggleTheme();break;
+   case 'pal':openPal();break;
+   case 'palClose':closePal();break;
+   case 'palRun':{const x=palList[+el.dataset.i];closePal();x&&x.run();break}
+   case 'ovClose':case 'closeModal':closeModal();break;
+   case 'confirmOk':{const cb=UI._confirm;closeModal();cb&&cb();break}
+   // ideas
+   case 'newIdea':ideaModal();break;
+   case 'editIdea':ideaModal(id);break;
+   case 'saveIdea':saveIdea(id||null);break;
+   case 'delIdea':confirmBox('Delete idea?','Its hooks and posts stay, but they’ll be unlinked.','Delete',()=>{S.ideas=S.ideas.filter(x=>x.id!==id);S.hooks.forEach(h=>{if(h.ideaId===id)h.ideaId=''});S.posts.forEach(p=>{if(p.ideaId===id)p.ideaId=''});save();render();toast('Idea deleted')});break;
+   case 'ideaView':UI.ideaView=el.dataset.v;render();break;
+   case 'ideaHook':{const r=saveIdea(id,true);if(!r)break;closeModal();UI.hookIdea=id;UI.hookTopic=r.title;UI.hookSugs=genHooks(r.title);go('hooks');break}
+   case 'ideaSchedule':{let r=S.ideas.find(x=>x.id===id);if($('#m-title')){r=saveIdea(id,true);if(!r)break}closeModal();postModal(null,{ideaId:id,title:r.title,platform:r.platform});break}
+   case 'ideaGen':{const r=saveIdea(id,true);if(!r)break;closeModal();UI.cat=['image','video'].includes(UI.cat)?UI.cat:'video';const m=curModel().cat===UI.cat?curModel():MODELS.find(x=>x.cat===UI.cat);UI.model=m.id;formOf(m).prompt=r.title+(r.notes?'. '+r.notes:'');formOf(m).__idea=id;go('studio');break}
+   // hooks
+   case 'hookGen':{const t=UI.hookTopic.trim();if(!t){toast('Type a topic first');$('#hb-topic').focus();break}UI.hookSugs=genHooks(t);render();break}
+   case 'hookTopic':UI.hookTopic=el.dataset.v;UI.hookSugs=genHooks(el.dataset.v);render();break;
+   case 'hookEdit':UI.hookDraft=UI.hookSugs[+el.dataset.i];render();$('#hk-text').focus();break;
+   case 'hookSaveSug':{const t=UI.hookSugs[+el.dataset.i];S.hooks.unshift({id:uid(),text:t,ideaId:UI.hookIdea,rating:0,createdAt:Date.now()});UI.hookSugs.splice(+el.dataset.i,1);act('hook');save();render();toast('Hook saved');break}
+   case 'hookSave':{const t=UI.hookDraft.trim();if(!t){toast('Write a hook first');break}S.hooks.unshift({id:uid(),text:t,ideaId:UI.hookIdea,rating:0,createdAt:Date.now()});UI.hookDraft='';act('hook');save();render();toast('Hook saved');break}
+   case 'hookSort':UI.hookSort=el.dataset.v;render();break;
+   case 'rate':{const h=S.hooks.find(x=>x.id===id);h.rating=h.rating===+el.dataset.v?0:+el.dataset.v;save();render();break}
+   case 'copyHook':copy(S.hooks.find(x=>x.id===id).text,'Hook copied');break;
+   case 'delHook':S.hooks=S.hooks.filter(x=>x.id!==id);save();render();toast('Hook deleted');break;
+   case 'hookStudio':{const h=S.hooks.find(x=>x.id===id);UI.cat='video';const m=curModel().cat==='video'?curModel():MODELS.find(x=>x.cat==='video');UI.model=m.id;UI.pendingPrompt=h.text;UI.pendingIdea=h.ideaId||'';go('studio');break}
+   // calendar & posts
+   case 'calNav':{const v=+el.dataset.v;if(!v){UI.cal={y:new Date().getFullYear(),m:new Date().getMonth()}}else{const d=new Date(UI.cal.y,UI.cal.m+v,1);UI.cal={y:d.getFullYear(),m:d.getMonth()}}render();break}
+   case 'dayClick':postModal(null,{date:el.dataset.day});break;
+   case 'newPost':postModal();break;
+   case 'editPost':postModal(id);break;
+   case 'savePost':savePost(id||null);break;
+   case 'markPosted':savePost(id,true);break;
+   case 'delPost':S.posts=S.posts.filter(x=>x.id!==id);save();closeModal();render();toast('Post deleted');break;
+   // studio
+   case 'cat':UI.cat=el.dataset.v;UI.mq='';render();break;
+   case 'pickModel':{const m=MODELS.find(x=>x.id===id);if(!m)break;const prev=formOf(curModel()).prompt;UI.cat=m.cat;UI.model=m.id;const f=formOf(m);if(!f.prompt&&prev&&!m.np)f.prompt=prev;if(UI.route!=='studio')go('studio');else render();break}
+   case 'generate':generate();break;
+   case 'draft':saveDraft();break;
+   case 'copyCurl':copy(curl(),'cURL copied. Set HF_API_KEY_ID and HF_API_KEY_SECRET before running it.');break;
+   case 'copyPrompt':{const f=formOf(curModel());if(!f.prompt)return toast('No prompt to copy');copy(f.prompt,'Prompt copied');break}
+   case 'insertHook':pickFromModal('hook');break;
+   case 'insertIdea':pickFromModal('idea');break;
+   case 'insText':closeModal();setPrompt(el.dataset.v,'.');break;
+   case 'insIdea':{const i=S.ideas.find(x=>x.id===id);closeModal();formOf(curModel()).__idea=id;setPrompt(i.title+(i.notes?'. '+i.notes:''),'.');break}
+   case 'addTerm':setPrompt(el.dataset.v,',');break;
+   case 'insertTpl':insertTpl();break;
+   case 'insertMulti':insertMulti();break;
+   case 'undoTpl':{const m=curModel();if(UI._undo&&UI._undo.id===m.id){formOf(m).prompt=UI._undo.p;UI._undo=null;render()}break}
+   case 'insertTag':{const t=$('#sf-prompt');const v=el.dataset.v;if(t){const a0=t.selectionStart??t.value.length,b0=t.selectionEnd??a0;t.value=t.value.slice(0,a0)+v+t.value.slice(b0);t.focus();t.setSelectionRange(a0+v.length,a0+v.length);sfInput(t)}break}
+   case 'loadJob':{const j=S.jobs.find(x=>x.id===id);const m=MODELS.find(x=>x.id===j.model);if(!m)break;UI.cat=m.cat;UI.model=m.id;UI.forms[m.id]={...formOf(m),...(j.form||{prompt:j.prompt})};render();$('#view').scrollTop=0;toast('Loaded into the form');break}
+   case 'cancelJob':{const j=S.jobs.find(x=>x.id===id);try{await api.cancel(j);j.status='canceled'}catch(err){toast(err.message,'bad')}save();refreshJobs();break}
+   case 'copyJob':{const j=S.jobs.find(x=>x.id===id);copy(j.prompt||JSON.stringify(j.body),'Prompt copied');break}
+   case 'delJob':S.jobs=S.jobs.filter(x=>x.id!==id);save();refreshJobs();break;
+   case 'clearJobs':S.jobs=S.jobs.filter(j=>!TERMINAL.includes(j.status)||j.status==='draft');save();render();break;
+   // library
+   case 'libF':UI.libF=el.dataset.v;render();break;
+   case 'addAsset':assetModal();break;
+   case 'editAsset':assetModal(id);break;
+   case 'saveAsset':{const t=$('#a-title').value.trim(),ty=$('#a-type').value,ide=$('#a-idea').value;if(id){Object.assign(S.assets.find(x=>x.id===id),{title:t,type:ty,ideaId:ide})}else{const u=$('#a-url').value.trim();if(!/^https?:\/\//.test(u)){toast('Paste a full https:// link');break}S.assets.unshift({id:uid(),url:u,type:ty||mediaType(u,''),title:t,ideaId:ide,model:'Added manually',createdAt:Date.now()});act('gen')}save();closeModal();render();toast('Saved to library');break}
+   case 'copyUrl':copy(S.assets.find(x=>x.id===id).url,'Link copied');break;
+   case 'delAsset':S.assets=S.assets.filter(x=>x.id!==id);save();render();break;
+   // settings
+   case 'setTheme':S.settings.theme=el.dataset.v;save();applyTheme();render();break;
+   case 'saveKey':{const kid=$('#k-id').value.trim(),ks=$('#k-sec').value.trim();if(!kid||!ks){toast('Enter both the key ID and the secret');break}const r=await window.genartz.setKey({id:kid,secret:ks});UI.hasKey=!!(r&&r.ok);render();toast(UI.hasKey?'API key saved and encrypted on this PC':'Couldn’t save the key: '+(r&&r.error),UI.hasKey?'':'bad');break}
+   case 'removeKey':await window.genartz.setKey({id:'',secret:''});UI.hasKey=false;render();toast('API key removed');break;
+   case 'testKey':{toast('Testing…');const r=await window.genartz.test();toast(r.ok?'Connected to Higgsfield ✓':r.error,r.ok?'':'bad');break}
+   case 'delEp':delete S.settings.endpoints[id];save();render();break;
+   case 'askNotif':Notification.requestPermission().then(()=>render());break;
+   case 'export':exportData();break;
+   case 'copyBackup':copy(backupJSON(),'Backup copied. Paste it into a .json file to keep it.');break;
+   case 'downloadBackup':downloadBackup();closeModal();break;
+   case 'pasteBackup':openModal('Paste a backup','<div class="fld"><label for="pb-txt">Backup JSON</label><textarea id="pb-txt" rows="8" placeholder=\'{"app":"Gen Artz", …}\' style="font-family:ui-monospace,Consolas,monospace;font-size:12px"></textarea></div>',`<button class="btn" data-a="closeModal">Cancel</button><button class="btn pri" data-a="pasteImport">${ic('upload')}Import</button>`);break;
+   case 'pasteImport':{const t=$('#pb-txt').value;closeModal();importText(t);break}
+   case 'clearSample':['ideas','hooks','posts'].forEach(k=>S[k]=S[k].filter(x=>!x.sample));save();render();toast('Sample data removed');break;
+   case 'reset':confirmBox('Erase everything?','This deletes all ideas, hooks, posts, generations and settings on this device. Export a backup first if you want to keep them.','Erase',()=>{S=defaults();save();applyTheme();render();toast('All data erased')});break;
+  }
+});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.dataset.f&&t.tagName!=='SELECT'){UI[t.dataset.f]=t.value;render()}
+  if(t.dataset.live){UI[t.dataset.live]=t.value;live(t.dataset.live)}
+  if(t.dataset.sf!==undefined&&t.tagName!=='SELECT'&&t.type!=='checkbox')sfInput(t);
+  if(t.dataset.ep!==undefined){S.settings.endpoints[UI.model]=cleanPath(t.value);saveSoon();updatePreview()}
+  if(t.id==='pal-q'){palSel=0;palRender()}
+  if(t.dataset.set&&t.type!=='checkbox'&&t.type!=='number'){S.settings[t.dataset.set]=t.value.trim();saveSoon();renderSide()}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.dataset.f&&t.tagName==='SELECT'){UI[t.dataset.f]=t.value;render()}
+  if(t.dataset.sf!==undefined&&(t.tagName==='SELECT'||t.type==='checkbox'))sfInput(t);
+  if(t.dataset.set&&(t.type==='checkbox'||t.type==='number')){S.settings[t.dataset.set]=t.type==='checkbox'?t.checked:Math.max(1,Math.min(50,+t.value||5));save();render()}
+  if(t.id==='m-idea'){const i=S.ideas.find(x=>x.id===t.value);if(i){const ti=$('#m-ptitle');if(ti&&!ti.value.trim())ti.value=i.title;$('#m-pplat').value=i.platform;const hs=S.hooks.filter(h=>h.ideaId===i.id);$('#m-hook').innerHTML='<option value="">No hook</option>'+hs.map(h=>`<option value="${h.id}">${esc(h.text.slice(0,70))}</option>`).join('')}}
+  if(t.id==='imp-file'){importFile(t.files[0]);t.value=''}
+});
+document.addEventListener('keydown',e=>{
+  const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#palette').innerHTML?closePal():openPal();return}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='n'&&!$('#modal').innerHTML){e.preventDefault();ideaModal();return}
+  if(e.key==='/'&&!typing&&!$('#modal').innerHTML){e.preventDefault();openPal();return}
+  if(e.key==='Escape'){if($('#palette').innerHTML)closePal();else if($('#modal').innerHTML)closeModal();return}
+  if($('#palette').innerHTML){if(e.key==='ArrowDown'){e.preventDefault();palSel=Math.min(palList.length-1,palSel+1);palRender()}else if(e.key==='ArrowUp'){e.preventDefault();palSel=Math.max(0,palSel-1);palRender()}else if(e.key==='Enter'){e.preventDefault();const x=palList[palSel];closePal();x&&x.run()}return}
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){if(UI.route==='studio'&&!$('#modal').innerHTML){e.preventDefault();generate()}else if($('[data-a="saveIdea"]'))$('[data-a="saveIdea"]').click();else if($('[data-a="savePost"]'))$('[data-a="savePost"]').click()}
+  if(e.key==='Tab'&&!e.shiftKey&&e.target.id==='sf-prompt'&&e.target.value.includes('«')){const t=e.target,v=t.value;let i=v.indexOf('«',t.selectionEnd);if(i<0)i=v.indexOf('«');if(i>=0){e.preventDefault();t.setSelectionRange(i,v.indexOf('»',i)+1)}}
+  if(e.key==='Enter'&&e.target.id==='hb-topic'){e.preventDefault();$('[data-a="hookGen"]').click()}
+});
+document.addEventListener('dragstart',e=>{const el=e.target.closest?.('[data-drag]');if(!el)return;e.dataTransfer.setData('text/plain',el.dataset.drag+':'+el.dataset.id);e.dataTransfer.effectAllowed='move'});
+document.addEventListener('dragover',e=>{const t=e.target.closest?.('[data-drop]');if(!t)return;e.preventDefault();$$('.over').forEach(x=>x!==t&&x.classList.remove('over'));t.classList.add('over')});
+document.addEventListener('dragleave',e=>{const t=e.target.closest?.('[data-drop]');if(t&&!t.contains(e.relatedTarget))t.classList.remove('over')});
+document.addEventListener('dragend',()=>$$('.over').forEach(x=>x.classList.remove('over')));
+document.addEventListener('drop',e=>{const t=e.target.closest?.('[data-drop]');if(!t)return;e.preventDefault();t.classList.remove('over');const[kind,id]=(e.dataTransfer.getData('text/plain')||'').split(':');
+  if(kind==='post'&&t.dataset.drop==='day'){const p=S.posts.find(x=>x.id===id);if(p&&p.date!==t.dataset.day){p.date=t.dataset.day;p.notified=false;save();render();toast('Moved to '+fmtDate(p.date))}}
+  if(kind==='idea'&&t.dataset.drop==='status'){const i=S.ideas.find(x=>x.id===id);if(i&&i.status!==t.dataset.status){i.status=t.dataset.status;i.updatedAt=Date.now();act(i.status==='Posted'?'post':'idea');save();render()}}});
+
+/* ---------- reminders ---------- */
+function checkDue(){if(!S.settings.remind)return;const n=Date.now();let ch=false;
+  S.posts.forEach(p=>{if(p.status==='posted'||p.notified)return;const[h,mi]=(p.time||'09:00').split(':').map(Number);const d=parseYmd(p.date);d.setHours(h,mi);const diff=n-d.getTime();if(diff>=0&&diff<36e5){notify('Time to post: '+p.title,plat(p.platform).n+' · '+fmtTime(p.time));toast('⏰ Time to post: '+p.title);p.notified=true;ch=true}});if(ch)save()}
+setInterval(checkDue,30000);
+
+/* ---------- boot ---------- */
+load();applyTheme();
+UI.route=routeFromHash();
+render();setTimeout(checkDue,1500);
+if(DESK&&window.genartz.hasKey)window.genartz.hasKey().then(v=>{UI.hasKey=!!v;render();pollJobs()});else pollJobs();
+</script>
+</body>
+</html>

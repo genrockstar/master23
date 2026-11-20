@@ -1,0 +1,33 @@
+{
+  "name": "gen-artz",
+  "productName": "Gen Artz",
+  "version": "1.0.0",
+  "description": "Plan content, write hooks, schedule posts and generate media with Higgsfield models.",
+  "main": "main.js",
+  "author": "Gen Artz",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.genverse.genartz",
+    "productName": "Gen Artz",
+    "files": ["main.js", "preload.js", "app/**/*", "build/icon.png"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "win": { "target": ["nsis", "portable"], "icon": "build/icon.png" },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Gen Artz"
+    },
+    "portable": { "artifactName": "GenArtz-Portable-${version}.exe" }
+  }
+}
